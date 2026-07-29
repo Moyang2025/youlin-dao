@@ -46,6 +46,20 @@ Hardhat 3 同时配置 `default` 与 `production` 编译 profile，均使用 Sol
 
 ## Monad Testnet
 
+首次部署可以创建一组全新的测试专用钱包，私钥只写入 Git 忽略的本地
+`.env`，控制台不会打印私钥：
+
+```powershell
+npm run wallets:create
+```
+
+给命令输出的 deployer 公钥地址领取测试 MON 后，可由 deployer 自动把
+测试 MON 分发给 12 个演示角色：
+
+```powershell
+npm run wallets:fund
+```
+
 当前官方配置：
 
 - Chain ID：`10143`
