@@ -1,0 +1,16 @@
+node_modules/
+.next/
+dist/
+site-static/
+coverage/
+cache/
+artifacts/
+output/
+.playwright-cli/
+.pw-cache/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example
+ignition/deployments/chain-31337/

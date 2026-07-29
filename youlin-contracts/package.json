@@ -1,0 +1,33 @@
+{
+  "name": "youlin-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "hardhat compile",
+    "typecheck": "hardhat compile && tsc --noEmit",
+    "test": "hardhat test",
+    "test:coverage": "hardhat test --coverage",
+    "deploy:local": "hardhat ignition deploy ignition/modules/Youlin.ts --network hardhat",
+    "deploy:monad": "hardhat ignition deploy ignition/modules/Youlin.ts --network monadTestnet",
+    "record:monad": "tsx scripts/record-deployment.ts",
+    "check:monad": "tsx scripts/check-deployment.ts",
+    "bootstrap:demo": "tsx scripts/bootstrap-demo.ts",
+    "seed:demo": "tsx scripts/seed-demo-projects.ts",
+    "export:abi": "tsx scripts/export-abi.ts"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@prb/math": "^4.1.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.1.8",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+    "@types/node": "^24.0.15",
+    "dotenv": "^17.2.1",
+    "hardhat": "^3.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "viem": "^2.33.3"
+  }
+}

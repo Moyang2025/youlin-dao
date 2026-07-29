@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "name": "社区雨水花园共建",
+  "category": "社区环境",
+  "summary": "改造一处长期积水的社区边角地，建设可公开维护的雨水花园。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "0.06",
+  "expectedDurationSeconds": 600,
+  "fundUse": [
+    { "item": "耐水植物与土壤", "amountMON": "0.03" },
+    { "item": "排水材料与工具", "amountMON": "0.03" }
+  ],
+  "milestones": ["共同发起确认", "场地整理", "公开验收"],
+  "images": []
+}

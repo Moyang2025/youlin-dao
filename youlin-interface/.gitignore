@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+dist
+site-static
+.DS_Store
+*.log
+*.tsbuildinfo
+.pw-cache
+.playwright-cli
+output/playwright
+.env*
+!.env.example

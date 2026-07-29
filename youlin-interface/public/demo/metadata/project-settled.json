@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "name": "城南社区阅读角",
+  "category": "社区教育",
+  "summary": "完成空间修缮、采购首批图书，并建立面向社区的开放借阅机制。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "0.06",
+  "expectedDurationSeconds": 900,
+  "fundUse": [
+    { "item": "图书与书架", "amountMON": "0.03" },
+    { "item": "空间修缮", "amountMON": "0.03" }
+  ],
+  "milestones": ["首轮完成", "中期 80 分", "第二轮完成", "结项 90 分", "无挑战结算"],
+  "images": []
+}

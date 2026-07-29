@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "name": "街角临时遮雨棚",
+  "category": "邻里互助",
+  "summary": "演示第一轮未达标后的权限外判定、发起质押解锁与捐款者主动退款。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "0.06",
+  "expectedDurationSeconds": 600,
+  "fundUse": [
+    { "item": "结构材料", "amountMON": "0.06" }
+  ],
+  "milestones": ["首轮募捐", "未达标退款"],
+  "images": []
+}

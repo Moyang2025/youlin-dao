@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "name": "桥下夜校照明计划",
+  "category": "公共空间",
+  "summary": "为社区夜校补充安全照明、电路保护和基础桌椅。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "0.06",
+  "expectedDurationSeconds": 600,
+  "fundUse": [
+    { "item": "低压照明", "amountMON": "0.04" },
+    { "item": "电路保护", "amountMON": "0.02" }
+  ],
+  "milestones": ["采购", "安装", "夜间验收"],
+  "images": []
+}
