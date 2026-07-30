@@ -124,7 +124,16 @@ async function fetchMetadata(uri: string): Promise<ProjectMetadata | undefined> 
     return undefined;
   }
   try {
-    const response = await fetch(resolveContentUri(uri));
+    const resolved = resolveContentUri(uri);
+    const url = new URL(resolved);
+    const canonicalDemoHost =
+      "youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site";
+    const requestUrl =
+      url.hostname === canonicalDemoHost &&
+      url.pathname.startsWith("/demo/metadata/")
+        ? `${url.pathname}${url.search}`
+        : resolved;
+    const response = await fetch(requestUrl);
     if (!response.ok) return undefined;
     return (await response.json()) as ProjectMetadata;
   } catch {

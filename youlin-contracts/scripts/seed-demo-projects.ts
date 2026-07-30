@@ -183,7 +183,18 @@ async function acceptAndActivate(id: bigint, label: string) {
   await send(donor4, `${label}：权限外激活`, "activateProject", [id]);
 }
 
-const draft = await createProject("project-draft.json", "项目 A", 3_600);
+const resumeDraftId = process.env.SEED_RESUME_DRAFT_ID?.trim();
+const draft = resumeDraftId
+  ? {
+      id: BigInt(resumeDraftId),
+      metadataURI:
+        "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/" +
+        "demo/metadata/project-draft.json",
+    }
+  : await createProject("project-draft.json", "项目 A", 3_600);
+if (resumeDraftId) {
+  console.log(`项目 A：复用已确认草案 #${resumeDraftId}`);
+}
 projects.push({
   id: draft.id.toString(),
   label: "项目 A：草案待共同发起",

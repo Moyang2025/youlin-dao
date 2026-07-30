@@ -1,0 +1,56 @@
+{
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "deployer": "0x00A206fcCD057360F173D31A2f6090C74f9F456c",
+  "demoAccounts": [
+    {
+      "label": "initiator-1",
+      "address": "0x077c889d3F1fCE509765e39388765eBEA0457e60"
+    },
+    {
+      "label": "initiator-2",
+      "address": "0x96EcbE0D0A285f8469844B71b28a001e57B7Ab81"
+    },
+    {
+      "label": "initiator-3",
+      "address": "0xfeAe1299076B3d14ab0203d9a96588157A6af4e6"
+    },
+    {
+      "label": "donor-1",
+      "address": "0x694FFC8ae867501d1141A8b9b1140678f65D3c63"
+    },
+    {
+      "label": "donor-2",
+      "address": "0x50A72742aE4B78e45215fC620c9817939d83B9A7"
+    },
+    {
+      "label": "donor-3",
+      "address": "0x93f4418cc2742C6B348fbc9561Fdfc5EAc404C49"
+    },
+    {
+      "label": "donor-4",
+      "address": "0x70C6eC3baaB9BbB7e981023E082A4af6582aF986"
+    },
+    {
+      "label": "challenger-1",
+      "address": "0x3d9520fb6EBf42f21635D7234D3644c42A2b6519"
+    },
+    {
+      "label": "challenger-2",
+      "address": "0xF31DA2B8d7a58Db7CFc23F9645e942401cD46Ad6"
+    },
+    {
+      "label": "juror-1",
+      "address": "0xD2626Fc39594f37e2e29Af5E8fB139EF8Bc16d46"
+    },
+    {
+      "label": "juror-2",
+      "address": "0x7b85dAe030d10f31eD344296D78273d098A4CC3c"
+    },
+    {
+      "label": "juror-3",
+      "address": "0x4045d10024b0269EB1397Faa54b4c44F3C044BCF"
+    }
+  ],
+  "generatedAt": "2026-07-29T18:34:01.186Z"
+}

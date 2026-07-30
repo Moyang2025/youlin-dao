@@ -14,6 +14,7 @@
     "wallets:fund": "tsx scripts/fund-demo-wallets.ts",
     "record:monad": "tsx scripts/record-deployment.ts",
     "check:monad": "tsx scripts/check-deployment.ts",
+    "check:demo": "tsx scripts/check-demo.ts",
     "bootstrap:demo": "tsx scripts/bootstrap-demo.ts",
     "seed:demo": "tsx scripts/seed-demo-projects.ts",
     "export:abi": "tsx scripts/export-abi.ts"

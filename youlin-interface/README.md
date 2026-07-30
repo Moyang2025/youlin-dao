@@ -8,9 +8,9 @@
 - React Query 5：项目、P/R 账户状态和捐款索引缓存；
 - 由 `黑客松/youlin-contracts/scripts/export-abi.ts` 自动生成 ABI 与地址。
 
-页面没有本地项目数组或“点击后加数字”的模拟逻辑。合约尚未部署时会明确
-显示空状态，并阻止发送交易；部署后项目广场从 `projectCount` 和每个项目
-的 core/times/content 视图恢复。
+页面没有本地项目数组或“点击后加数字”的模拟逻辑。项目广场从已部署
+Monad Testnet 协议的 `projectCount` 和每个项目的 core/times/content
+视图恢复；当前 4 个演示项目均由真实交易创建。
 
 ## 开发与构建
 
@@ -20,9 +20,8 @@ npm run dev
 npm run build
 ```
 
-`npm run build` 执行 Next 静态导出。公开仓库不包含 ChatGPT Sites 的专用
-`.openai/hosting.json` 和打包脚本；生产站点继续由原 Sites 源仓库独立维护，
-避免公开 GitHub 推送改变其远端配置。
+`npm run build` 执行 Next 静态导出，并由 `postbuild` 生成 Sites 所需的
+`dist/client`、`dist/server` 和 `.openai/hosting.json`。
 
 公开前端环境变量只能包含公共配置：
 
@@ -36,6 +35,18 @@ NEXT_PUBLIC_EXPLORER_URL=https://testnet.monadscan.com
 
 ## 部署
 
-生产 Sites 项目继续使用既有项目
-`appgprj_6a63884968b48191bafad3fff55f0c86`，但其专用配置不发布到本仓库。
-公开 GitHub 仓库与 Sites 源仓库是两条独立发布链路。
+`.openai/hosting.json` 已绑定现有 Sites 项目
+`appgprj_6a63884968b48191bafad3fff55f0c86`。不要创建新 Sites 项目，也
+不要修改本目录 Git `origin`。公开 GitHub 仓库通过独立 staging clone
+同步，Sites 源仓库继续独立维护。
+
+当前协议地址：
+
+```text
+YoulinProtocol      0x20a1Df8893fD7531A77E225f9727b45959D2ff66
+YoulinReputation    0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3
+YoulinParticipation 0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF
+```
+
+桌面和 390×844 手机视口已验证能恢复 Draft、Round1Funding、
+Round1Failed、Settled 四种真实状态；干净浏览器会话无控制台错误或警告。

@@ -1,0 +1,215 @@
+{
+  "chainId": 10143,
+  "generatedAt": "2026-07-30T09:24:41.034Z",
+  "note": "All entries and state transitions were created by Monad Testnet transactions.",
+  "publicDemoAddresses": {
+    "initiators": [
+      "0x077c889d3F1fCE509765e39388765eBEA0457e60",
+      "0x96EcbE0D0A285f8469844B71b28a001e57B7Ab81",
+      "0xfeAe1299076B3d14ab0203d9a96588157A6af4e6"
+    ],
+    "donors": [
+      "0x694FFC8ae867501d1141A8b9b1140678f65D3c63",
+      "0x50A72742aE4B78e45215fC620c9817939d83B9A7",
+      "0x93f4418cc2742C6B348fbc9561Fdfc5EAc404C49",
+      "0x70C6eC3baaB9BbB7e981023E082A4af6582aF986"
+    ],
+    "challengers": [
+      "0x3d9520fb6EBf42f21635D7234D3644c42A2b6519",
+      "0xF31DA2B8d7a58Db7CFc23F9645e942401cD46Ad6"
+    ],
+    "jurors": [
+      "0xD2626Fc39594f37e2e29Af5E8fB139EF8Bc16d46",
+      "0x7b85dAe030d10f31eD344296D78273d098A4CC3c",
+      "0x4045d10024b0269EB1397Faa54b4c44F3C044BCF"
+    ]
+  },
+  "projects": [
+    {
+      "id": "1",
+      "label": "项目 A：草案待共同发起",
+      "expectedState": "Draft",
+      "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/project-draft.json"
+    },
+    {
+      "id": "2",
+      "label": "项目 B：第一轮募捐",
+      "expectedState": "Round1Funding",
+      "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/project-funding.json"
+    },
+    {
+      "id": "3",
+      "label": "项目 C：第一轮未达标并退款",
+      "expectedState": "Round1Failed",
+      "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/project-failed.json"
+    },
+    {
+      "id": "4",
+      "label": "项目 D：90 分完整结算",
+      "expectedState": "Settled",
+      "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/project-settled.json"
+    }
+  ],
+  "transactions": [
+    {
+      "label": "项目 B：创建草案",
+      "hash": "0x2e5c3c1a91507093181448e5543621074678d65e76dfbfb7c26dae94bb234a36"
+    },
+    {
+      "label": "项目 B：发起人 1 确认质押",
+      "hash": "0x9921570225acfb0b325099f49dbed1b0ce0330735b2d0e1efb5b2c170b8d34a6"
+    },
+    {
+      "label": "项目 B：发起人 2 确认质押",
+      "hash": "0x17d621c037e4cb7ad0d4873d028f4cf9fa844380df3466d9830240bf99fc4599"
+    },
+    {
+      "label": "项目 B：发起人 3 确认质押",
+      "hash": "0x1289aabe8101612b6d8c4b7e11ceade728780b569e9a56ca8c21c50c3c38def8"
+    },
+    {
+      "label": "项目 B：权限外激活",
+      "hash": "0xf569794e14b59fde3bdcd269000804b0b0bd58d249005a1b49c491d5ff7cc132"
+    },
+    {
+      "label": "项目 C：创建草案",
+      "hash": "0x703fe2185dc3f6405c3f48114f59a2e5b58f4bb10c7a4e6f77474707596edf41"
+    },
+    {
+      "label": "项目 C：发起人 1 确认质押",
+      "hash": "0xa2e5195a6dc042a57171b58531beacaf4078567b383385115165167508c94c40"
+    },
+    {
+      "label": "项目 C：发起人 2 确认质押",
+      "hash": "0x49a3dbb9c034b3004a5de7cd8d06f623d00e0e44e370104ba4684e686f698af3"
+    },
+    {
+      "label": "项目 C：发起人 3 确认质押",
+      "hash": "0x502ffcb2dc075dd54539b38d68d1dbb7dd9a66eb804d8d1a15a804bd62c5456e"
+    },
+    {
+      "label": "项目 C：权限外激活",
+      "hash": "0x49ab9ae7c925a71ca11b1f6a3f3bd8c8c402357cd98257d8e31a5351d49a6f23"
+    },
+    {
+      "label": "项目 C：未达标捐款",
+      "hash": "0x8f8ef33bd27ff176e5f17db4a02cea334a00f5a209ac4fbe74e5372ff0c4c60a"
+    },
+    {
+      "label": "项目 C：判定首轮未达标",
+      "hash": "0xc963cf773ea32a32df75f7d8909d6f84ab7549f151a1f052eb163dbe4a6a7b7d"
+    },
+    {
+      "label": "项目 C：领取退款",
+      "hash": "0xe361c0d4588743b7a9d4a179c00a28df69a10de35909899f510b36e625f1a217"
+    },
+    {
+      "label": "项目 D：创建草案",
+      "hash": "0xd36552048a459d0fddf7fc0cc0fe2c2e39816707002163f34ac83cca8aac2562"
+    },
+    {
+      "label": "项目 D：发起人 1 确认质押",
+      "hash": "0xd396690c2e778e04716ed4dc80fd25bc4f8abe153cd210102025b9c5750a1eaa"
+    },
+    {
+      "label": "项目 D：发起人 2 确认质押",
+      "hash": "0xbc36bfeb1206a93e62c462dd26a5a841d6dad0bc3132fa250caa1edd6891e157"
+    },
+    {
+      "label": "项目 D：发起人 3 确认质押",
+      "hash": "0xc251ccf2227a3698a3d943b135c904f65598cbb3c9f943d8b8b31f45d8413938"
+    },
+    {
+      "label": "项目 D：权限外激活",
+      "hash": "0x6478004c0d0fe21ae29d64391f9de322a4332dff2b30d0c7e51e01f1eb338d51"
+    },
+    {
+      "label": "项目 D：第一轮捐款 1",
+      "hash": "0x4a27122cdb2631c8c3c35d58b77a71ac3b98fe32547df8a219fdded42aea8561"
+    },
+    {
+      "label": "项目 D：第一轮捐款 2",
+      "hash": "0x6a1a1b22ae1166fa92eeb4690af7e90822ebb4484e45db9534b63353be6558fa"
+    },
+    {
+      "label": "项目 D：第一轮捐款 3",
+      "hash": "0xb2c92ca96ab41adcd95e5d05415e112bcbdd7c4f06c423507b8555ff0e0d21b8"
+    },
+    {
+      "label": "项目 D：领取第一轮捐款 R",
+      "hash": "0xde0391cc6d7d0807e2fcb514bb4234a1340074003bb32c06d1b3760efcc9be24"
+    },
+    {
+      "label": "项目 D：领取第一轮捐款 R",
+      "hash": "0xddd9b865c25dc71d8c364c024f233cf09ff0e969d660eb9f9d249f8e765e5b2c"
+    },
+    {
+      "label": "项目 D：领取第一轮捐款 R",
+      "hash": "0x813bb749699c5dea06bbe50868279e85158ea43c3c546af18504d7b9d17de8ce"
+    },
+    {
+      "label": "项目 D：项目钱包领取第一轮资金",
+      "hash": "0xb94745041def79783338b496c2191c644f5a0cb971566dc9f6f4f5f5875596d0"
+    },
+    {
+      "label": "项目 D：提交中期材料",
+      "hash": "0xb6c71f7c2b7fd4baf098b0bb7fa9b61f4af28fccdfc626a78c13cea92eb5a4c5"
+    },
+    {
+      "label": "项目 D：中期评分 8",
+      "hash": "0x310c7648f3fbc0123daa54c8ca69a5b4f267f3f5b87b5fb58374f0cdbd15a84b"
+    },
+    {
+      "label": "项目 D：中期评分 8",
+      "hash": "0xcaa2d775e7172ccd31137d966c1543240d814d5ea6a24da625279c71c11a7402"
+    },
+    {
+      "label": "项目 D：中期评分 8",
+      "hash": "0xe3088f4cea66e7a999deb936162836d1ef7d3ecc8b722f527775f843832f11d3"
+    },
+    {
+      "label": "项目 D：中期定分",
+      "hash": "0x1e2798e0f3be1e472e606c3afecca64917151385adbbdd31122e111af867030e"
+    },
+    {
+      "label": "项目 D：第二轮捐款 1",
+      "hash": "0xbbd6e2ce1cb00bee4748fe246eb137798b65740a831e52317826403ec54aec97"
+    },
+    {
+      "label": "项目 D：第二轮捐款 2",
+      "hash": "0xa7e22d36289980f6cf0691e9cd37a7cf0cca9d84af28cdceb5cff1411a7cca72"
+    },
+    {
+      "label": "项目 D：第二轮捐款 3",
+      "hash": "0x9ee7155e1f414b90682a5757aa0100fc4781895a2fe039aba9f32fbfa9da3e2e"
+    },
+    {
+      "label": "项目 D：提交结项材料",
+      "hash": "0xfc626310290dd3d74dfb96b78a92313fb18d9d05ef669997b817d68e107fccab"
+    },
+    {
+      "label": "项目 D：结项评分 9",
+      "hash": "0x87c5802ec8a03702e990ac3a3a5d3ad6e477d1e866b547c80aaac1e654d6d53b"
+    },
+    {
+      "label": "项目 D：结项评分 9",
+      "hash": "0x80e66092f14d0aa1a43579a242ee04fffa052714061a26b9466840f4b3293ea7"
+    },
+    {
+      "label": "项目 D：结项评分 9",
+      "hash": "0x3121ca1cf98ec96d156293f6f993db743cfc95f973c30d68edee4ed261e47d4f"
+    },
+    {
+      "label": "项目 D：结项评分 9",
+      "hash": "0x1830c53d0c60b7f37a2da67bf6570f36cf8b592d6cedc5a6ab1141c095afd507"
+    },
+    {
+      "label": "项目 D：结项定分",
+      "hash": "0x53cda8ecfe59b34d9c3a785c9c8b371c298cfe65b074233d0857cb0da0aea428"
+    },
+    {
+      "label": "项目 D：无挑战最终结算",
+      "hash": "0x66a60a772cef178b173f97b767959c41167290d455eaab447f9c1d3c585a892e"
+    }
+  ]
+}

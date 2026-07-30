@@ -73,6 +73,7 @@ npm run wallets:fund
 npm run deploy:monad
 npm run record:monad
 npm run check:monad
+npm run check:demo
 npm run export:abi
 ```
 
@@ -92,6 +93,18 @@ npm run seed:demo
 完整结算项目，并把公开地址、项目 ID、交易哈希写入
 `deployments/demo-projects.json`。脚本从 `.env` 读取至少 12 个独立演示
 测试钱包私钥，但永不输出或写回私钥。
+
+当前 Monad Testnet 合约：
+
+```text
+YoulinProtocol      0x20a1Df8893fD7531A77E225f9727b45959D2ff66
+YoulinReputation    0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3
+YoulinParticipation 0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF
+```
+
+三份合约均已通过 Sourcify 完整验证，bootstrap 已永久关闭。`check:demo`
+会独立读取 4 个演示项目的状态、两轮金额、80/90 分结果、P 凭证、R 余额
+与 bootstrap 标志，并在不一致时失败。
 
 ## 安全与部署边界
 

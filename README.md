@@ -30,10 +30,14 @@ docs/               # 只发布项目说明、部署记录、演示说明
 
 - Solidity 0.8.28 / Prague / viaIR 编译通过；
 - 41 条测试通过，总行覆盖率 91.11%；
-- Ignition 本地三合约部署与角色授权通过；
-- ABI 自动导出到现有前端；
-- Next 生产静态构建与 Sites 打包通过；
-- 桌面、390px 手机、空链状态、创建项目弹窗完成真实浏览器回归。
+- Monad Testnet 三合约部署、P/R 角色授权及 Sourcify 源码验证通过；
+- bootstrap 已永久关闭，真实地址和 ABI 已自动导出到前端；
+- 4 个真实交易项目覆盖草案、募捐、失败退款和完整结算；
+- 项目 D 两轮各 `0.03 MON`，中期 80、结项 90；
+- Next 生产构建通过；
+- 桌面和 390×844 手机浏览器恢复 4 个链上项目，干净会话
+  0 error / 0 warning。
 
-Monad Testnet 地址、源码验证、真实演示交易和生产 Sites 发布必须在测试
-钱包签名后填写，未发生前保持明确的 pending 状态。
+部署地址、验证 URL、公开演示账户和全部交易哈希见
+`youlin-contracts/deployments/` 与 `docs/部署记录.md`。生产 Sites
+继续由独立的既有 Sites 源仓库维护。
