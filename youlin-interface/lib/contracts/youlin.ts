@@ -608,7 +608,10 @@ export function readableContractError(error: unknown) {
     ["ProposalNotPassed", "本提案未达到通过条件"],
     ["ProposalAlreadyExecuted", "本提案已经执行"],
     ["WalletNotConnected", "请先连接钱包"],
-    ["WrongNetwork", "请先切换到 Monad Testnet"]
+    ["WrongNetwork", "请先切换到 Monad Testnet"],
+    ["Provider not found", "未检测到浏览器钱包，请安装并启用 MetaMask 或兼容钱包后刷新页面"],
+    ["Connector not found", "未检测到可用的钱包连接器，请启用钱包扩展后刷新页面"],
+    ["No provider was found", "未检测到浏览器钱包，请安装并启用 MetaMask 或兼容钱包后刷新页面"]
   ];
   for (const [signature, message] of friendlyErrors) {
     if (error.message.includes(signature)) return message;

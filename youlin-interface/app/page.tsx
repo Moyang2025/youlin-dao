@@ -339,8 +339,10 @@ export default function Home() {
       return;
     }
     const connector = connectors[0];
-    if (!connector) {
-      notify("未检测到浏览器钱包，请安装 MetaMask 或兼容钱包。");
+    const injectedProvider =
+      typeof window !== "undefined" ? (window as Window & { ethereum?: unknown }).ethereum : undefined;
+    if (!connector || !injectedProvider) {
+      notify("未检测到浏览器钱包，请安装并启用 MetaMask 或兼容钱包后刷新页面。");
       return;
     }
     connectMutation.mutate(
