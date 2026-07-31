@@ -1,0 +1,12 @@
+{
+  "chainId": 10143,
+  "registry": "0x3d6Bd044f11018114c1793E80Aed53d230D46Ac7",
+  "account": "0x00A206fcCD057360F173D31A2f6090C74f9F456c",
+  "profile": {
+    "nickname": "有邻 DAO 演示账户",
+    "avatarURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/youlin-logo.png",
+    "bio": "关注社区公共项目、透明募捐与可验证的链上公益履历。"
+  },
+  "transactionHash": "0xdfa37721a83237fb9f48a5684bd4cf771976e6bad12100ec3df5483d788c6d9e",
+  "generatedAt": "2026-07-31T11:41:33.181Z"
+}

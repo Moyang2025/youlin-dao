@@ -6,6 +6,14 @@ Solidity 0.8.28 / EVM Prague / Hardhat 3 项目，包含：
 - `YoulinParticipation`：不可转让、每地址每项目至多一枚的参与凭证 P；
 - `YoulinProtocol`：共同发起与 R 质押、两轮募捐、中期/结项对数加权评分、挑战、争议投票和结算；
 - `YoulinGenesisTreasury`：新用户创世捐款入口与不可绕过投票的社区金库。
+- `YoulinProfileRegistry`：每个钱包自行维护公开的链上昵称、头像 URI 与自我描述；无管理员代改入口。
+
+## 链上个人资料
+
+- 资料与钱包地址一一对应，只能由该地址调用 `setProfile` 或 `clearProfile`；
+- 昵称允许重复，昵称、头像 URI、自我描述均可选，但不能全部为空；
+- UTF-8 字节上限依次为 64、512、512；头像只保存 URI，不把图片字节写入链上；
+- 所有字段都是公开链上数据，不应填写手机号、住址等隐私信息。
 
 ## 创世金库规则
 
@@ -30,6 +38,6 @@ npm run check:monad
 npm run export:abi
 ```
 
-测试结果：53/53 通过，整体行覆盖率 92.28%，创世金库行覆盖率 96.91%。
+测试结果：59/59 通过，整体行覆盖率 92.56%，个人资料合约行覆盖率 100%，创世金库行覆盖率 96.91%。
 
 Monad Testnet 部署、源码验证、真实演示交易与公开地址见 `deployments/monad-testnet.json`、`deployments/genesis-demo.json` 和公开仓库 `docs/部署记录.md`。本地 `.env` 与测试账户私钥受到 `.gitignore` 保护，禁止提交或打印。

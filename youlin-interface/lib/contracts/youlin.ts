@@ -16,6 +16,7 @@ import {
 
 import participationArtifact from "./YoulinParticipation.abi.json";
 import genesisArtifact from "./YoulinGenesisTreasury.abi.json";
+import profileRegistryArtifact from "./YoulinProfileRegistry.abi.json";
 import protocolArtifact from "./YoulinProtocol.abi.json";
 import reputationArtifact from "./YoulinReputation.abi.json";
 import { youlinDeployment } from "./addresses";
@@ -24,14 +25,55 @@ export const protocolAbi = protocolArtifact as Abi;
 export const reputationAbi = reputationArtifact as Abi;
 export const participationAbi = participationArtifact as Abi;
 export const genesisTreasuryAbi = genesisArtifact as Abi;
+export const profileRegistryAbi = profileRegistryArtifact as Abi;
 
 export const protocolAddress = youlinDeployment.protocol as Address;
 export const reputationAddress = youlinDeployment.reputation as Address;
 export const participationAddress = youlinDeployment.participation as Address;
 export const genesisTreasuryAddress =
   youlinDeployment.genesisTreasury as Address;
+export const profileRegistryAddress =
+  youlinDeployment.profileRegistry as Address;
 export const isYoulinDeployed = youlinDeployment.deployed;
 export const isGenesisDeployed = youlinDeployment.genesisDeployed;
+export const isProfileDeployed = youlinDeployment.profileDeployed;
+
+export type AccountProfile = {
+  nickname: string;
+  avatarURI: string;
+  bio: string;
+  updatedAt: bigint;
+  exists: boolean;
+};
+
+export function useYoulinAccountProfile(address?: Address) {
+  const publicClient = usePublicClient({ chainId: youlinDeployment.chainId });
+
+  return useQuery({
+    queryKey: ["youlin", "account-profile", profileRegistryAddress, address],
+    enabled: isProfileDeployed && Boolean(publicClient && address),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      if (!publicClient || !address) {
+        throw new Error("请先连接钱包。");
+      }
+      const result = (await publicClient.readContract({
+        address: profileRegistryAddress,
+        abi: profileRegistryAbi,
+        functionName: "getProfile",
+        args: [address]
+      })) as readonly [string, string, string, bigint, boolean];
+      return {
+        nickname: result[0],
+        avatarURI: result[1],
+        bio: result[2],
+        updatedAt: result[3],
+        exists: result[4]
+      } satisfies AccountProfile;
+    }
+  });
+}
 
 export const PROJECT_STATES = [
   "草案待确认",
@@ -464,7 +506,7 @@ export type TransactionPhase =
   | { kind: "error"; label: string; message: string };
 
 export type ContractCall = {
-  contract?: "protocol" | "genesis";
+  contract?: "protocol" | "genesis" | "profile";
   functionName: string;
   args?: readonly unknown[];
   value?: bigint;
@@ -488,7 +530,11 @@ export function useYoulinTransaction(
       label
     }: ContractCall) => {
       const isDeployed =
-        contract === "genesis" ? isGenesisDeployed : isYoulinDeployed;
+        contract === "genesis"
+          ? isGenesisDeployed
+          : contract === "profile"
+            ? isProfileDeployed
+            : isYoulinDeployed;
       if (!isDeployed) {
         throw new Error("Monad Testnet 合约尚未部署，当前不会发送交易。");
       }
@@ -508,8 +554,15 @@ export function useYoulinTransaction(
           address:
             contract === "genesis"
               ? genesisTreasuryAddress
-              : protocolAddress,
-          abi: contract === "genesis" ? genesisTreasuryAbi : protocolAbi,
+              : contract === "profile"
+                ? profileRegistryAddress
+                : protocolAddress,
+          abi:
+            contract === "genesis"
+              ? genesisTreasuryAbi
+              : contract === "profile"
+                ? profileRegistryAbi
+                : protocolAbi,
           functionName,
           args,
           value,
@@ -543,6 +596,9 @@ export function readableContractError(error: unknown) {
   const friendlyErrors: Array<[string, string]> = [
     ["DonationExceedsRemaining", "捐款金额超过本轮项目的剩余可募金额"],
     ["DonationCapExceeded", "本次捐款会超过该地址通过创世项目累计获得 100 R 的上限"],
+    ["EmptyProfile", "昵称、头像链接和自我描述不能同时为空"],
+    ["ProfileNotFound", "当前钱包还没有可清空的链上资料"],
+    ["FieldTooLong", "资料字段超过链上长度限制，请缩短后重试"],
     ["NotEligibleAtSnapshot", "该地址在提案快照时尚未向创世项目捐款，不能参与本次投票"],
     ["AlreadyVoted", "该地址已经对本提案投过票"],
     ["VotingStillActive", "投票期尚未结束"],

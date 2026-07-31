@@ -29,11 +29,13 @@ import {
   isYoulinDeployed,
   readableContractError,
   shortAddress,
+  useYoulinAccountProfile,
   useGenesisTreasury,
   useYoulinProfile,
   useYoulinProjects,
   useYoulinTransaction,
   type ChainProject,
+  type AccountProfile,
   type ContractCall,
   type GenesisProposal,
   type GenesisTreasuryState,
@@ -51,6 +53,7 @@ type Modal =
   | { type: "reputation" }
   | { type: "create" }
   | { type: "genesis" }
+  | { type: "account-profile" }
   | null;
 
 type IconName =
@@ -300,8 +303,10 @@ export default function Home() {
   const { switchChain } = useSwitchChain();
   const projectsQuery = useYoulinProjects();
   const profileQuery = useYoulinProfile(connection.address);
+  const accountProfileQuery = useYoulinAccountProfile(connection.address);
   const genesisQuery = useGenesisTreasury(connection.address);
   const profile = profileQuery.data ?? EMPTY_PROFILE;
+  const accountProfile = accountProfileQuery.data;
   const projects = projectsQuery.data ?? [];
 
   const onPhase = useCallback((phase: TransactionPhase) => setTxPhase(phase), []);
@@ -403,7 +408,7 @@ export default function Home() {
           >
             <Icon name="wallet" size={17} />
             {connection.isConnected
-              ? shortAddress(connection.address)
+              ? accountProfile?.nickname || shortAddress(connection.address)
               : connectMutation.isPending
                 ? "连接中…"
                 : "连接钱包"}
@@ -429,9 +434,11 @@ export default function Home() {
           <ProfileView
             privacy={privacy}
             address={connection.address}
+            accountProfile={accountProfile}
             profile={profile}
             projects={projects}
             loading={profileQuery.isLoading}
+            accountProfileLoading={accountProfileQuery.isLoading}
             genesis={genesisQuery.data}
             genesisLoading={genesisQuery.isLoading}
             openModal={setModal}
@@ -476,6 +483,7 @@ export default function Home() {
           project={selectedProject}
           address={connection.address}
           profile={profile}
+          accountProfile={accountProfile}
           genesis={genesisQuery.data}
           close={() => setModal(null)}
           openModal={setModal}
@@ -525,12 +533,56 @@ function TransactionStatus({ phase }: { phase: TransactionPhase }) {
   );
 }
 
+function displayAvatarURI(uri?: string) {
+  if (!uri) return undefined;
+  if (uri.startsWith("ipfs://")) {
+    return `https://ipfs.io/ipfs/${uri.slice("ipfs://".length)}`;
+  }
+  return uri.startsWith("https://") || uri.startsWith("http://")
+    ? uri
+    : undefined;
+}
+
+function AccountAvatar({
+  nickname,
+  avatarURI,
+  address,
+  privacy = false,
+  preview = false
+}: {
+  nickname?: string;
+  avatarURI?: string;
+  address?: Address;
+  privacy?: boolean;
+  preview?: boolean;
+}) {
+  const source = displayAvatarURI(avatarURI);
+  const fallback = privacy
+    ? "隐"
+    : nickname?.trim().slice(0, 1) || address?.slice(2, 4).toUpperCase() || "邻";
+  return (
+    <span className={`account-avatar ${preview ? "preview" : ""}`}>
+      <span>{fallback}</span>
+      {source && !privacy && (
+        <img
+          src={source}
+          alt={nickname ? `${nickname}的头像` : "账户头像"}
+          referrerPolicy="no-referrer"
+          onError={(event) => event.currentTarget.remove()}
+        />
+      )}
+    </span>
+  );
+}
+
 function ProfileView({
   privacy,
   address,
+  accountProfile,
   profile,
   projects,
   loading,
+  accountProfileLoading,
   genesis,
   genesisLoading,
   openModal,
@@ -538,9 +590,11 @@ function ProfileView({
 }: {
   privacy: boolean;
   address?: Address;
+  accountProfile?: AccountProfile;
   profile: typeof EMPTY_PROFILE;
   projects: ChainProject[];
   loading: boolean;
+  accountProfileLoading: boolean;
   genesis?: GenesisTreasuryState;
   genesisLoading: boolean;
   openModal: (modal: Modal) => void;
@@ -554,12 +608,36 @@ function ProfileView({
   return (
     <>
       <section className="profile-hero">
-        <div>
-          <span className="eyebrow">我的有邻 · 链上公益履历</span>
-          <h1>
-            {address ? `邻友 ${address.slice(-4).toUpperCase()}` : "连接钱包，恢复链上履历"}
-          </h1>
-          <p>每一次捐款、评分、质押与结算，都从 Monad 合约状态中恢复。</p>
+        <div className="account-identity">
+          <AccountAvatar
+            nickname={accountProfile?.nickname}
+            avatarURI={accountProfile?.avatarURI}
+            address={address}
+            privacy={privacy}
+          />
+          <div>
+            <span className="eyebrow">我的有邻 · 链上公益履历</span>
+            <h1>
+              {address
+                ? accountProfileLoading
+                  ? "读取链上资料…"
+                  : accountProfile?.nickname || `邻友 ${address.slice(-4).toUpperCase()}`
+                : "连接钱包，恢复链上履历"}
+            </h1>
+            <p>
+              {address && accountProfile?.bio
+                ? accountProfile.bio
+                : "每一次捐款、评分、质押与结算，都从 Monad 合约状态中恢复。"}
+            </p>
+            <button
+              className="profile-edit-button"
+              onClick={() => openModal({ type: "account-profile" })}
+              disabled={!address}
+            >
+              <Icon name="user" size={16} />
+              {accountProfile?.exists ? "编辑链上资料" : "创建链上资料"}
+            </button>
+          </div>
         </div>
         <div className="hero-proof">
           <span className="proof-icon"><Icon name="link" /></span>
@@ -946,6 +1024,7 @@ function ModalSheet({
   project,
   address,
   profile,
+  accountProfile,
   genesis,
   close,
   openModal,
@@ -956,6 +1035,7 @@ function ModalSheet({
   project?: ChainProject;
   address?: Address;
   profile: typeof EMPTY_PROFILE;
+  accountProfile?: AccountProfile;
   genesis?: GenesisTreasuryState;
   close: () => void;
   openModal: (modal: Modal) => void;
@@ -963,7 +1043,11 @@ function ModalSheet({
   pending: boolean;
 }) {
   const title =
-    modal.type === "reputation"
+    modal.type === "account-profile"
+      ? accountProfile?.exists
+        ? "编辑链上账户资料"
+        : "创建链上账户资料"
+      : modal.type === "reputation"
       ? "统一声誉 R"
       : modal.type === "genesis"
         ? "创世项目与捐款者共治金库"
@@ -1000,6 +1084,14 @@ function ModalSheet({
           </button>
         </header>
         {modal.type === "reputation" && <ReputationDetail profile={profile} />}
+        {modal.type === "account-profile" && (
+          <AccountProfileForm
+            address={address}
+            accountProfile={accountProfile}
+            run={run}
+            pending={pending}
+          />
+        )}
         {modal.type === "genesis" && (
           <GenesisTreasuryPanel
             address={address}
@@ -1039,6 +1131,136 @@ function ModalSheet({
           <EmptyState title="项目尚未读取" body="请关闭后重试，或检查 Monad RPC 状态。" />
         )}
       </section>
+    </div>
+  );
+}
+
+const utf8Bytes = (value: string) => new TextEncoder().encode(value).length;
+
+function AccountProfileForm({
+  address,
+  accountProfile,
+  run,
+  pending
+}: {
+  address?: Address;
+  accountProfile?: AccountProfile;
+  run: (call: ContractCall, closeOnSuccess?: boolean) => Promise<void>;
+  pending: boolean;
+}) {
+  const [nickname, setNickname] = useState(accountProfile?.nickname ?? "");
+  const [avatarURI, setAvatarURI] = useState(accountProfile?.avatarURI ?? "");
+  const [bio, setBio] = useState(accountProfile?.bio ?? "");
+  const normalizedNickname = nickname.trim();
+  const normalizedAvatar = avatarURI.trim();
+  const normalizedBio = bio.trim();
+  const nicknameBytes = utf8Bytes(normalizedNickname);
+  const avatarBytes = utf8Bytes(normalizedAvatar);
+  const bioBytes = utf8Bytes(normalizedBio);
+  const avatarValid =
+    normalizedAvatar.length === 0 || Boolean(displayAvatarURI(normalizedAvatar));
+  const valid =
+    Boolean(address) &&
+    Boolean(normalizedNickname || normalizedAvatar || normalizedBio) &&
+    nicknameBytes <= 64 &&
+    avatarBytes <= 512 &&
+    bioBytes <= 512 &&
+    avatarValid;
+
+  return (
+    <div className="modal-content profile-form">
+      <div className="profile-preview-card">
+        <AccountAvatar
+          preview
+          nickname={normalizedNickname}
+          avatarURI={normalizedAvatar}
+          address={address}
+        />
+        <div>
+          <span>链上公开资料预览</span>
+          <strong>{normalizedNickname || (address ? shortAddress(address) : "邻友")}</strong>
+          <p>{normalizedBio || "写一段关于你的社区关注与参与方向。"}</p>
+        </div>
+      </div>
+
+      <label className="profile-field">
+        <span>昵称 <small>{nicknameBytes} / 64 字节</small></span>
+        <input
+          value={nickname}
+          onChange={(event) => setNickname(event.target.value)}
+          placeholder="例如：小邻、社区园丁"
+          autoComplete="nickname"
+        />
+      </label>
+
+      <label className="profile-field">
+        <span>头像链接 <small>{avatarBytes} / 512 字节</small></span>
+        <input
+          value={avatarURI}
+          onChange={(event) => setAvatarURI(event.target.value)}
+          placeholder="https://… 或 ipfs://…"
+          inputMode="url"
+        />
+        {!avatarValid && <em>仅支持 http://、https:// 或 ipfs:// 链接</em>}
+      </label>
+
+      <label className="profile-field">
+        <span>自我描述 <small>{bioBytes} / 512 字节</small></span>
+        <textarea
+          value={bio}
+          onChange={(event) => setBio(event.target.value)}
+          placeholder="介绍你关注的社区议题、参与经验或希望共同完成的事情"
+          rows={5}
+        />
+      </label>
+
+      <div className="warning-box profile-public-note">
+        <Icon name="shield" />
+        <div>
+          <strong>这些资料会公开写入 Monad Testnet</strong>
+          <span>请勿填写手机号、住址、私钥或其他敏感信息；头像图片本身存放在你提供的外部链接。</span>
+        </div>
+      </div>
+
+      {!address && <EmptyState title="请先连接钱包" body="钱包地址就是资料所有者，任何其他账户都不能替你修改。" />}
+
+      <div className="modal-action-row profile-actions">
+        <AppButton
+          disabled={!valid || pending}
+          onClick={() =>
+            void run(
+              {
+                contract: "profile",
+                functionName: "setProfile",
+                args: [normalizedNickname, normalizedAvatar, normalizedBio],
+                label: accountProfile?.exists ? "更新链上账户资料" : "创建链上账户资料"
+              },
+              true
+            )
+          }
+        >
+          <Icon name="user" size={17} />
+          {accountProfile?.exists ? "保存链上修改" : "创建链上资料"}
+        </AppButton>
+        {accountProfile?.exists && (
+          <AppButton
+            variant="danger"
+            disabled={pending || !address}
+            onClick={() =>
+              void run(
+                {
+                  contract: "profile",
+                  functionName: "clearProfile",
+                  label: "清空链上账户资料"
+                },
+                true
+              )
+            }
+          >
+            清空资料
+          </AppButton>
+        )}
+      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import protocolArtifact from "../artifacts/contracts/YoulinProtocol.sol/YoulinPr
 import participationArtifact from "../artifacts/contracts/YoulinParticipation.sol/YoulinParticipation.json" with { type: "json" };
 import reputationArtifact from "../artifacts/contracts/YoulinReputation.sol/YoulinReputation.json" with { type: "json" };
 import genesisTreasuryArtifact from "../artifacts/contracts/YoulinGenesisTreasury.sol/YoulinGenesisTreasury.json" with { type: "json" };
+import profileRegistryArtifact from "../artifacts/contracts/YoulinProfileRegistry.sol/YoulinProfileRegistry.json" with { type: "json" };
 
 type Deployment = {
   contracts: {
@@ -20,6 +21,7 @@ type Deployment = {
     YoulinReputation: Address;
     YoulinParticipation: Address;
     YoulinGenesisTreasury?: Address;
+    YoulinProfileRegistry?: Address;
   };
 };
 
@@ -38,6 +40,31 @@ for (const [name, address] of Object.entries(deployment.contracts)) {
   const code = await client.getCode({ address });
   if (!code || code === "0x") throw new Error(`${name} has no deployed code`);
   console.log(`${name}: code present at ${address}`);
+}
+
+const profileRegistry = deployment.contracts.YoulinProfileRegistry;
+if (profileRegistry !== undefined) {
+  const [nicknameLimit, avatarLimit, bioLimit] = (await Promise.all([
+    client.readContract({
+      address: profileRegistry,
+      abi: profileRegistryArtifact.abi as Abi,
+      functionName: "MAX_NICKNAME_BYTES",
+    }),
+    client.readContract({
+      address: profileRegistry,
+      abi: profileRegistryArtifact.abi as Abi,
+      functionName: "MAX_AVATAR_URI_BYTES",
+    }),
+    client.readContract({
+      address: profileRegistry,
+      abi: profileRegistryArtifact.abi as Abi,
+      functionName: "MAX_BIO_BYTES",
+    }),
+  ])) as [bigint, bigint, bigint];
+  if (nicknameLimit !== 64n || avatarLimit !== 512n || bioLimit !== 512n) {
+    throw new Error("Profile registry field limits mismatch");
+  }
+  console.log("Profile registry code and 64/512/512-byte limits verified.");
 }
 
 const protocol = deployment.contracts.YoulinProtocol;

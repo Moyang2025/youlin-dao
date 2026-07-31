@@ -9,4 +9,6 @@ export const youlinDeployment = {
   participation: "0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF",
   genesisTreasury: "0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
   genesisDeployed: true,
+  profileRegistry: "0x3d6Bd044f11018114c1793E80Aed53d230D46Ac7",
+  profileDeployed: true,
 } as const;

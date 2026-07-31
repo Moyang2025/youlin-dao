@@ -11,6 +11,7 @@ type Deployment = {
     YoulinReputation: string;
     YoulinParticipation: string;
     YoulinGenesisTreasury?: string;
+    YoulinProfileRegistry?: string;
   };
 };
 
@@ -29,6 +30,7 @@ const contractNames = [
   "YoulinReputation",
   "YoulinParticipation",
   "YoulinGenesisTreasury",
+  "YoulinProfileRegistry",
 ] as const;
 
 await mkdir(frontendContractsDirectory, { recursive: true });
@@ -85,6 +87,10 @@ export const youlinDeployment = {
     addresses.YoulinGenesisTreasury ?? zeroAddress,
   )},
   genesisDeployed: ${Boolean(addresses.YoulinGenesisTreasury)},
+  profileRegistry: ${JSON.stringify(
+    addresses.YoulinProfileRegistry ?? zeroAddress,
+  )},
+  profileDeployed: ${Boolean(addresses.YoulinProfileRegistry)},
 } as const;
 `;
 await writeFile(
