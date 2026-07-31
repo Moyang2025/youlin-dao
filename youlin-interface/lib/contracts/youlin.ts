@@ -207,6 +207,7 @@ export type GenesisTreasuryState = {
   cumulativeDonation: bigint;
   proposalCount: bigint;
   genesisProjectId: bigint;
+  hasCredential: boolean;
   proposals: GenesisProposal[];
 };
 
@@ -433,6 +434,15 @@ export function useGenesisTreasury(address?: Address) {
         ]
       });
       const proposalCount = base[7] as bigint;
+      const genesisProjectId = base[8] as bigint;
+      const hasCredential = address
+        ? ((await publicClient.readContract({
+            address: participationAddress,
+            abi: participationAbi,
+            functionName: "hasCredential",
+            args: [address, genesisProjectId]
+          })) as boolean)
+        : false;
       const ids = Array.from({ length: Number(proposalCount) }, (_, index) =>
         BigInt(index + 1)
       );
@@ -491,7 +501,8 @@ export function useGenesisTreasury(address?: Address) {
         reservedBalance: base[5] as bigint,
         cumulativeDonation: base[6] as bigint,
         proposalCount,
-        genesisProjectId: base[8] as bigint,
+        genesisProjectId,
+        hasCredential,
         proposals
       } satisfies GenesisTreasuryState;
     }

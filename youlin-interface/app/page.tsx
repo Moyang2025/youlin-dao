@@ -605,7 +605,9 @@ function ProfileView({
   const participated = profile.participated
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is ChainProject => Boolean(project));
-  const records = profile.participated.length + profile.initiated.length;
+  const hasGenesisCredential = Boolean(address && genesis?.hasCredential);
+  const credentialCount = profile.participated.length + (hasGenesisCredential ? 1 : 0);
+  const records = credentialCount + profile.initiated.length;
 
   return (
     <>
@@ -637,7 +639,7 @@ function ProfileView({
               disabled={!address}
             >
               <Icon name="user" size={16} />
-              {accountProfile?.exists ? "编辑链上资料" : "创建链上资料"}
+              {accountProfile?.exists ? "编辑昵称、头像与简介" : "设置昵称、头像与简介"}
             </button>
           </div>
         </div>
@@ -682,7 +684,7 @@ function ProfileView({
             </div>
             <div>
               <span>参与项目</span>
-              <strong>{privacy ? "••" : profile.participated.length}</strong>
+              <strong>{privacy ? "••" : credentialCount}</strong>
             </div>
           </div>
           <div className="stake-note">
@@ -728,6 +730,12 @@ function ProfileView({
             </button>
           </div>
           <div className="credential-list">
+            {hasGenesisCredential && genesis && (
+              <GenesisCredentialCard
+                donation={genesis.cumulativeDonation}
+                onClick={() => openModal({ type: "genesis" })}
+              />
+            )}
             {participated.map((project) => {
               const donation = profile.donations[project.id.toString()] ?? {
                 round1: 0n,
@@ -745,7 +753,7 @@ function ProfileView({
               );
             })}
             {!address && <EmptyState title="尚未连接钱包" body="连接后读取 P、R、捐款和发起项目索引。" />}
-            {address && !loading && participated.length === 0 && (
+            {address && !loading && !genesisLoading && credentialCount === 0 && (
               <EmptyState title="当前钱包还没有 P" body="首次有效捐款会由合约铸造不可转让的项目参与凭证。" />
             )}
           </div>
@@ -860,6 +868,27 @@ function CredentialCard({
         <small>累计支持 {displayEther(donation, 2)} MON · 项目 #{project.id}</small>
       </div>
       <StateBadge tone={tone}>{project.finalScore ? `${project.finalScore} 分` : project.stateLabel}</StateBadge>
+      <Icon name="arrow" size={18} />
+    </button>
+  );
+}
+
+function GenesisCredentialCard({
+  donation,
+  onClick
+}: {
+  donation: bigint;
+  onClick: () => void;
+}) {
+  return (
+    <button className="credential-card genesis-credential-card" onClick={onClick}>
+      <span className="p-seal genesis-p-seal">P</span>
+      <div>
+        <span className="credential-title">创世项目参与凭证</span>
+        <strong>捐款者共治金库</strong>
+        <small>累计支持 {displayEther(donation, 2)} MON · 创世项目链上 P</small>
+      </div>
+      <StateBadge tone="active">创世 P</StateBadge>
       <Icon name="arrow" size={18} />
     </button>
   );

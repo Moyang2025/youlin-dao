@@ -307,13 +307,18 @@ main {
   gap: 7px;
   margin-top: 14px;
   padding: 8px 12px;
-  border: 1px solid #bfd4cf;
+  border: 1px solid var(--teal-dark);
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--teal-dark);
+  background: var(--teal-dark);
+  color: #fff;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.profile-edit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(22, 64, 59, 0.16);
 }
 
 .profile-edit-button:disabled {
@@ -671,6 +676,16 @@ main {
   transform: translateY(-2px);
   border-color: #bfd5cf;
   box-shadow: 0 12px 28px rgba(32, 66, 61, 0.07);
+}
+
+.genesis-credential-card {
+  border-color: #c9c0f2;
+  background: linear-gradient(110deg, #f7f4ff 0%, #f2fbf8 100%);
+}
+
+.genesis-p-seal {
+  background: linear-gradient(145deg, #766ac7, #398c83);
+  color: #fff;
 }
 
 .p-seal,
@@ -1875,6 +1890,12 @@ main {
 
   .credential-card > svg {
     display: none;
+  }
+
+  .credential-card > .state-badge {
+    grid-column: 2;
+    justify-self: start;
+    white-space: nowrap;
   }
 
   .p-seal {
