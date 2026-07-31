@@ -16,7 +16,9 @@ import {
 import {
   isAddress,
   isHex,
+  keccak256,
   parseEther,
+  toBytes,
   zeroHash,
   type Address,
   type Hex
@@ -27,11 +29,14 @@ import {
   isYoulinDeployed,
   readableContractError,
   shortAddress,
+  useGenesisTreasury,
   useYoulinProfile,
   useYoulinProjects,
   useYoulinTransaction,
   type ChainProject,
   type ContractCall,
+  type GenesisProposal,
+  type GenesisTreasuryState,
   type TransactionPhase
 } from "@/lib/contracts/youlin";
 import { youlinDeployment } from "@/lib/contracts/addresses";
@@ -45,6 +50,7 @@ type Modal =
   | { type: "credential"; projectId: bigint }
   | { type: "reputation" }
   | { type: "create" }
+  | { type: "genesis" }
   | null;
 
 type IconName =
@@ -294,6 +300,7 @@ export default function Home() {
   const { switchChain } = useSwitchChain();
   const projectsQuery = useYoulinProjects();
   const profileQuery = useYoulinProfile(connection.address);
+  const genesisQuery = useGenesisTreasury(connection.address);
   const profile = profileQuery.data ?? EMPTY_PROFILE;
   const projects = projectsQuery.data ?? [];
 
@@ -425,6 +432,8 @@ export default function Home() {
             profile={profile}
             projects={projects}
             loading={profileQuery.isLoading}
+            genesis={genesisQuery.data}
+            genesisLoading={genesisQuery.isLoading}
             openModal={setModal}
             goProjects={() => setView("projects")}
           />
@@ -433,6 +442,8 @@ export default function Home() {
             projects={filteredProjects}
             loading={projectsQuery.isLoading}
             error={projectsQuery.error}
+            genesis={genesisQuery.data}
+            genesisLoading={genesisQuery.isLoading}
             query={query}
             setQuery={setQuery}
             filter={filter}
@@ -465,6 +476,7 @@ export default function Home() {
           project={selectedProject}
           address={connection.address}
           profile={profile}
+          genesis={genesisQuery.data}
           close={() => setModal(null)}
           openModal={setModal}
           run={run}
@@ -519,6 +531,8 @@ function ProfileView({
   profile,
   projects,
   loading,
+  genesis,
+  genesisLoading,
   openModal,
   goProjects
 }: {
@@ -527,6 +541,8 @@ function ProfileView({
   profile: typeof EMPTY_PROFILE;
   projects: ChainProject[];
   loading: boolean;
+  genesis?: GenesisTreasuryState;
+  genesisLoading: boolean;
   openModal: (modal: Modal) => void;
   goProjects: () => void;
 }) {
@@ -614,6 +630,12 @@ function ProfileView({
         </article>
       </section>
 
+      <GenesisSpotlight
+        genesis={genesis}
+        loading={genesisLoading}
+        onOpen={() => openModal({ type: "genesis" })}
+      />
+
       <section className="content-grid">
         <div className="content-column">
           <div className="section-heading">
@@ -695,6 +717,50 @@ function ProfileView({
   );
 }
 
+function GenesisSpotlight({
+  genesis,
+  loading,
+  onOpen
+}: {
+  genesis?: GenesisTreasuryState;
+  loading: boolean;
+  onOpen: () => void;
+}) {
+  const treasuryBalance = genesis
+    ? genesis.availableBalance + genesis.reservedBalance
+    : 0n;
+  return (
+    <section className="genesis-spotlight">
+      <div className="genesis-symbol">创</div>
+      <div className="genesis-copy">
+        <span className="section-kicker">GENESIS · DONOR-GOVERNED TREASURY</span>
+        <h2>创世项目与捐款者共治金库</h2>
+        <p>
+          捐款在同一笔交易中获得等额 R 与创世 P；金库支出必须由至少 3
+          位捐款者投票，并取得已投票对数权重的 66% 赞成。
+        </p>
+      </div>
+      <div className="genesis-metrics">
+        <div>
+          <span>累计捐款</span>
+          <strong>{loading ? "读取中…" : `${displayEther(genesis?.totalDonated ?? 0n, 2)} MON`}</strong>
+        </div>
+        <div>
+          <span>捐款者</span>
+          <strong>{loading ? "—" : (genesis?.donorCount ?? 0n).toString()}</strong>
+        </div>
+        <div>
+          <span>金库余额</span>
+          <strong>{loading ? "—" : `${displayEther(treasuryBalance, 2)} MON`}</strong>
+        </div>
+      </div>
+      <AppButton onClick={onOpen} disabled={!youlinDeployment.genesisDeployed}>
+        <Icon name="vote" size={17} /> 进入创世项目
+      </AppButton>
+    </section>
+  );
+}
+
 function CredentialCard({
   project,
   donation,
@@ -723,6 +789,8 @@ function ProjectsView({
   projects,
   loading,
   error,
+  genesis,
+  genesisLoading,
   query,
   setQuery,
   filter,
@@ -732,6 +800,8 @@ function ProjectsView({
   projects: ChainProject[];
   loading: boolean;
   error: Error | null;
+  genesis?: GenesisTreasuryState;
+  genesisLoading: boolean;
   query: string;
   setQuery: (value: string) => void;
   filter: string;
@@ -756,6 +826,12 @@ function ProjectsView({
           />
         </div>
       </section>
+
+      <GenesisSpotlight
+        genesis={genesis}
+        loading={genesisLoading}
+        onOpen={() => openModal({ type: "genesis" })}
+      />
 
       <section className="mechanism-banner">
         <div className="mechanism-title">
@@ -870,6 +946,7 @@ function ModalSheet({
   project,
   address,
   profile,
+  genesis,
   close,
   openModal,
   run,
@@ -879,6 +956,7 @@ function ModalSheet({
   project?: ChainProject;
   address?: Address;
   profile: typeof EMPTY_PROFILE;
+  genesis?: GenesisTreasuryState;
   close: () => void;
   openModal: (modal: Modal) => void;
   run: (call: ContractCall, closeOnSuccess?: boolean) => Promise<void>;
@@ -887,6 +965,8 @@ function ModalSheet({
   const title =
     modal.type === "reputation"
       ? "统一声誉 R"
+      : modal.type === "genesis"
+        ? "创世项目与捐款者共治金库"
       : modal.type === "create"
         ? "共同发起新项目"
         : modal.type === "donate"
@@ -920,6 +1000,14 @@ function ModalSheet({
           </button>
         </header>
         {modal.type === "reputation" && <ReputationDetail profile={profile} />}
+        {modal.type === "genesis" && (
+          <GenesisTreasuryPanel
+            address={address}
+            genesis={genesis}
+            run={run}
+            pending={pending}
+          />
+        )}
         {modal.type === "create" && (
           <CreateProjectForm address={address} run={run} pending={pending} />
         )}
@@ -953,6 +1041,395 @@ function ModalSheet({
       </section>
     </div>
   );
+}
+
+function GenesisTreasuryPanel({
+  address,
+  genesis,
+  run,
+  pending
+}: {
+  address?: Address;
+  genesis?: GenesisTreasuryState;
+  run: (call: ContractCall, closeOnSuccess?: boolean) => Promise<void>;
+  pending: boolean;
+}) {
+  const [donationAmount, setDonationAmount] = useState("0.1");
+  const [recipient, setRecipient] = useState("");
+  const [proposalAmount, setProposalAmount] = useState("0.1");
+  const [purpose, setPurpose] = useState("");
+  if (!genesis) {
+    return (
+      <div className="modal-content">
+        <EmptyState
+          title="创世金库尚未读取"
+          body="请稍后重试，或检查 Monad RPC 与创世合约部署状态。"
+        />
+      </div>
+    );
+  }
+
+  const remaining =
+    genesis.cumulativeDonation >= genesis.perAddressCap
+      ? 0n
+      : genesis.perAddressCap - genesis.cumulativeDonation;
+  const donationValid =
+    Number(donationAmount) > 0 &&
+    parseEther(donationAmount || "0") <= remaining;
+  const proposalValid =
+    isAddress(recipient) &&
+    Number(proposalAmount) > 0 &&
+    parseEther(proposalAmount || "0") <= genesis.availableBalance &&
+    purpose.trim().length > 0;
+  const createProposal = () => {
+    const normalizedPurpose = purpose.trim();
+    void run(
+      {
+        contract: "genesis",
+        functionName: "createProposal",
+        args: [
+          recipient as Address,
+          parseEther(proposalAmount),
+          `data:text/plain;charset=utf-8,${encodeURIComponent(normalizedPurpose)}`,
+          keccak256(toBytes(normalizedPurpose))
+        ],
+        label: "创建金库支出提案"
+      },
+      false
+    );
+  };
+
+  return (
+    <div className="modal-content genesis-panel">
+      <div className="genesis-ledger">
+        <div>
+          <span>金库余额</span>
+          <strong>
+            {displayEther(genesis.availableBalance + genesis.reservedBalance, 4)} MON
+          </strong>
+        </div>
+        <div>
+          <span>累计捐款者</span>
+          <strong>{genesis.donorCount.toString()}</strong>
+        </div>
+        <div>
+          <span>我的累计捐款</span>
+          <strong>{displayEther(genesis.cumulativeDonation, 4)} / {displayEther(genesis.perAddressCap, 0)} MON</strong>
+        </div>
+      </div>
+
+      <section className="genesis-section">
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">DONATE · MINT R + P</span>
+            <h3>向创世项目捐款</h3>
+          </div>
+        </div>
+        <label className="amount-field">
+          <span>捐款金额 · 剩余额度 {displayEther(remaining, 4)} MON</span>
+          <div>
+            <input
+              type="number"
+              min="0.0001"
+              step="0.1"
+              value={donationAmount}
+              onChange={(event) => setDonationAmount(event.target.value)}
+            />
+            <strong>MON</strong>
+          </div>
+        </label>
+        <div className="result-preview">
+          <div><span>即时获得</span><strong>{donationAmount || "0"} R</strong></div>
+          <div><span>创世凭证</span><strong>首次捐款铸造 P</strong></div>
+        </div>
+        <AppButton
+          disabled={pending || !address || !donationValid}
+          onClick={() =>
+            void run(
+              {
+                contract: "genesis",
+                functionName: "donate",
+                value: parseEther(donationAmount),
+                label: "创世项目捐款"
+              },
+              false
+            )
+          }
+        >
+          <Icon name="wallet" size={17} /> 捐款并即时获得 R
+        </AppButton>
+      </section>
+
+      <section className="genesis-section">
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">PROPOSE · ONCHAIN TREASURY</span>
+            <h3>创建资金使用提案</h3>
+          </div>
+        </div>
+        <div className="form-grid">
+          <label className="text-field">
+            <span>收款地址</span>
+            <input
+              value={recipient}
+              onChange={(event) => setRecipient(event.target.value)}
+              placeholder="0x…"
+            />
+          </label>
+          <label className="amount-field">
+            <span>申请金额</span>
+            <div>
+              <input
+                type="number"
+                min="0.0001"
+                value={proposalAmount}
+                onChange={(event) => setProposalAmount(event.target.value)}
+              />
+              <strong>MON</strong>
+            </div>
+          </label>
+        </div>
+        <label className="text-field">
+          <span>资金用途说明</span>
+          <textarea
+            value={purpose}
+            onChange={(event) => setPurpose(event.target.value)}
+            placeholder="说明收款方、用途、交付物和可核验依据"
+          />
+        </label>
+        <div className="rule-box">
+          <strong>弃权不计入赞成或反对</strong>
+          <p>
+            至少 3 个快照捐款地址实际投票；赞成对数权重达到已投总权重的
+            66% 后，任何人都可以执行预先锁定的转账。
+          </p>
+        </div>
+        <AppButton
+          variant="secondary"
+          disabled={
+            pending ||
+            !address ||
+            genesis.cumulativeDonation === 0n ||
+            !proposalValid
+          }
+          onClick={createProposal}
+        >
+          <Icon name="plus" size={17} /> 创建链上提案
+        </AppButton>
+      </section>
+
+      <section className="genesis-section">
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">VOTE · LOG WEIGHTED</span>
+            <h3>金库提案</h3>
+          </div>
+          <span>{genesis.proposalCount.toString()} 项</span>
+        </div>
+        <div className="genesis-proposals">
+          {genesis.proposals.map((proposal) => (
+            <GenesisProposalCard
+              key={proposal.id.toString()}
+              proposal={proposal}
+              address={address}
+              run={run}
+              pending={pending}
+            />
+          ))}
+          {genesis.proposals.length === 0 && (
+            <EmptyState
+              title="还没有资金使用提案"
+              body="创世捐款者可以提交收款地址、金额和用途说明。"
+            />
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function GenesisProposalCard({
+  proposal,
+  address,
+  run,
+  pending
+}: {
+  proposal: GenesisProposal;
+  address?: Address;
+  run: (call: ContractCall, closeOnSuccess?: boolean) => Promise<void>;
+  pending: boolean;
+}) {
+  const castWeight = proposal.supportWeight + proposal.rejectWeight;
+  const approval =
+    castWeight === 0n
+      ? 0
+      : Number((proposal.supportWeight * 10_000n) / castWeight) / 100;
+  const votingOpen =
+    !proposal.finalized &&
+    Date.now() <= Number(proposal.votingEndsAt) * 1000;
+  const canFinalize =
+    !proposal.finalized &&
+    Date.now() > Number(proposal.votingEndsAt) * 1000;
+  const status = proposal.cancelled
+    ? "已取消"
+    : proposal.executed
+      ? "已执行"
+      : proposal.finalized
+        ? proposal.passed
+          ? "已通过"
+          : "未通过"
+        : votingOpen
+          ? "投票中"
+          : "待定案";
+  const isProposer =
+    Boolean(address) &&
+    proposal.proposer.toLowerCase() === address?.toLowerCase();
+
+  return (
+    <article className="genesis-proposal-card">
+      <header>
+        <div>
+          <span>提案 #{proposal.id.toString()}</span>
+          <strong>{displayEther(proposal.amount, 4)} MON → {shortAddress(proposal.recipient)}</strong>
+        </div>
+        <StateBadge tone={proposal.passed ? "teal" : votingOpen ? "blue" : "amber"}>
+          {status}
+        </StateBadge>
+      </header>
+      <p>{decodeProposalPurpose(proposal.metadataURI)}</p>
+      <div className="proposal-vote-metrics">
+        <div><span>赞成权重</span><strong>{displayEther(proposal.supportWeight, 3)}</strong></div>
+        <div><span>反对权重</span><strong>{displayEther(proposal.rejectWeight, 3)}</strong></div>
+        <div><span>赞成比例</span><strong>{approval.toFixed(2)}%</strong></div>
+        <div><span>投票账户</span><strong>{proposal.voterCount.toString()} / 最少 3</strong></div>
+      </div>
+      <div className="project-meta">
+        <span><Icon name="clock" size={15} /> 截止 {new Date(Number(proposal.votingEndsAt) * 1000).toLocaleString("zh-CN")}</span>
+        <span><Icon name="wallet" size={15} /> {shortAddress(proposal.proposer)}</span>
+      </div>
+      <div className="modal-action-row">
+        {votingOpen && !proposal.hasVoted && (
+          <>
+            <AppButton
+              disabled={pending || !address}
+              onClick={() =>
+                void run(
+                  {
+                    contract: "genesis",
+                    functionName: "vote",
+                    args: [proposal.id, true],
+                    label: `赞成金库提案 #${proposal.id}`
+                  },
+                  false
+                )
+              }
+            >
+              赞成
+            </AppButton>
+            <AppButton
+              variant="danger"
+              disabled={pending || !address}
+              onClick={() =>
+                void run(
+                  {
+                    contract: "genesis",
+                    functionName: "vote",
+                    args: [proposal.id, false],
+                    label: `反对金库提案 #${proposal.id}`
+                  },
+                  false
+                )
+              }
+            >
+              反对
+            </AppButton>
+          </>
+        )}
+        {votingOpen && proposal.hasVoted && (
+          <span className="modal-note">当前钱包已经投票</span>
+        )}
+        {canFinalize && (
+          <AppButton
+            disabled={pending}
+            onClick={() =>
+              void run(
+                {
+                  contract: "genesis",
+                  functionName: "finalizeProposal",
+                  args: [proposal.id],
+                  label: `定案金库提案 #${proposal.id}`
+                },
+                false
+              )
+            }
+          >
+            定案
+          </AppButton>
+        )}
+        {proposal.finalized && proposal.passed && !proposal.executed && (
+          <AppButton
+            disabled={pending}
+            onClick={() =>
+              void run(
+                {
+                  contract: "genesis",
+                  functionName: "executeProposal",
+                  args: [proposal.id],
+                  label: `执行金库提案 #${proposal.id}`
+                },
+                false
+              )
+            }
+          >
+            执行转账
+          </AppButton>
+        )}
+        {!proposal.finalized && proposal.voterCount === 0n && isProposer && (
+          <AppButton
+            variant="quiet"
+            disabled={pending}
+            onClick={() =>
+              void run(
+                {
+                  contract: "genesis",
+                  functionName: "cancelProposal",
+                  args: [proposal.id],
+                  label: `取消金库提案 #${proposal.id}`
+                },
+                false
+              )
+            }
+          >
+            取消提案
+          </AppButton>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function decodeProposalPurpose(uri: string) {
+  const plainMarker = "data:text/plain;charset=utf-8,";
+  const jsonMarker = "data:application/json;charset=utf-8,";
+  const marker = uri.startsWith(plainMarker)
+    ? plainMarker
+    : uri.startsWith(jsonMarker)
+      ? jsonMarker
+      : undefined;
+  if (!marker) return uri;
+  try {
+    const decoded = decodeURIComponent(uri.slice(marker.length));
+    if (marker === jsonMarker) {
+      const metadata = JSON.parse(decoded) as {
+        purpose?: string;
+        title?: string;
+      };
+      return metadata.purpose ?? metadata.title ?? decoded;
+    }
+    return decoded;
+  } catch {
+    return uri.slice(marker.length);
+  }
 }
 
 function ReputationDetail({ profile }: { profile: typeof EMPTY_PROFILE }) {

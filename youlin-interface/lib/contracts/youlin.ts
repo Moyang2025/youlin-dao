@@ -15,6 +15,7 @@ import {
 } from "viem";
 
 import participationArtifact from "./YoulinParticipation.abi.json";
+import genesisArtifact from "./YoulinGenesisTreasury.abi.json";
 import protocolArtifact from "./YoulinProtocol.abi.json";
 import reputationArtifact from "./YoulinReputation.abi.json";
 import { youlinDeployment } from "./addresses";
@@ -22,11 +23,15 @@ import { youlinDeployment } from "./addresses";
 export const protocolAbi = protocolArtifact as Abi;
 export const reputationAbi = reputationArtifact as Abi;
 export const participationAbi = participationArtifact as Abi;
+export const genesisTreasuryAbi = genesisArtifact as Abi;
 
 export const protocolAddress = youlinDeployment.protocol as Address;
 export const reputationAddress = youlinDeployment.reputation as Address;
 export const participationAddress = youlinDeployment.participation as Address;
+export const genesisTreasuryAddress =
+  youlinDeployment.genesisTreasury as Address;
 export const isYoulinDeployed = youlinDeployment.deployed;
+export const isGenesisDeployed = youlinDeployment.genesisDeployed;
 
 export const PROJECT_STATES = [
   "草案待确认",
@@ -114,6 +119,55 @@ export type ChainProject = {
   metadata?: ProjectMetadata;
 };
 
+type GenesisProposalTuple = readonly [
+  Address,
+  Address,
+  bigint,
+  bigint,
+  bigint,
+  bigint,
+  bigint,
+  bigint,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  string,
+  Hash
+];
+
+export type GenesisProposal = {
+  id: bigint;
+  proposer: Address;
+  recipient: Address;
+  amount: bigint;
+  snapshotVersion: bigint;
+  votingEndsAt: bigint;
+  voterCount: bigint;
+  supportWeight: bigint;
+  rejectWeight: bigint;
+  finalized: boolean;
+  passed: boolean;
+  executed: boolean;
+  cancelled: boolean;
+  metadataURI: string;
+  metadataHash: Hash;
+  hasVoted: boolean;
+};
+
+export type GenesisTreasuryState = {
+  totalDonated: bigint;
+  donorCount: bigint;
+  perAddressCap: bigint;
+  votingDuration: bigint;
+  availableBalance: bigint;
+  reservedBalance: bigint;
+  cumulativeDonation: bigint;
+  proposalCount: bigint;
+  genesisProjectId: bigint;
+  proposals: GenesisProposal[];
+};
+
 const resolveContentUri = (uri: string) =>
   uri.startsWith("ipfs://")
     ? `https://ipfs.io/ipfs/${uri.slice("ipfs://".length)}`
@@ -147,7 +201,8 @@ export function useYoulinProjects() {
   return useQuery({
     queryKey: ["youlin", "projects", protocolAddress],
     enabled: isYoulinDeployed && Boolean(publicClient),
-    refetchInterval: 10_000,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!publicClient) return [] as ChainProject[];
       const count = (await publicClient.readContract({
@@ -156,29 +211,37 @@ export function useYoulinProjects() {
         functionName: "projectCount"
       })) as bigint;
 
+      const ids = Array.from({ length: Number(count) }, (_, index) =>
+        BigInt(index + 1)
+      );
+      const views = await publicClient.multicall({
+        allowFailure: false,
+        contracts: ids.flatMap((id) => [
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getProjectCore",
+            args: [id]
+          },
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getProjectTimes",
+            args: [id]
+          },
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getProjectContent",
+            args: [id]
+          }
+        ])
+      });
       const projects = await Promise.all(
-        Array.from({ length: Number(count) }, async (_, index) => {
-          const id = BigInt(index + 1);
-          const [core, times, content] = (await Promise.all([
-            publicClient.readContract({
-              address: protocolAddress,
-              abi: protocolAbi,
-              functionName: "getProjectCore",
-              args: [id]
-            }),
-            publicClient.readContract({
-              address: protocolAddress,
-              abi: protocolAbi,
-              functionName: "getProjectTimes",
-              args: [id]
-            }),
-            publicClient.readContract({
-              address: protocolAddress,
-              abi: protocolAbi,
-              functionName: "getProjectContent",
-              args: [id]
-            })
-          ])) as [ProjectCoreTuple, ProjectTimesTuple, ProjectContentTuple];
+        ids.map(async (id, index) => {
+          const core = views[index * 3] as ProjectCoreTuple;
+          const times = views[index * 3 + 1] as ProjectTimesTuple;
+          const content = views[index * 3 + 2] as ProjectContentTuple;
           const metadata = await fetchMetadata(content[0]);
           return {
             id,
@@ -215,7 +278,8 @@ export function useYoulinProfile(address?: Address) {
   return useQuery({
     queryKey: ["youlin", "profile", address, reputationAddress],
     enabled: isYoulinDeployed && Boolean(publicClient && address),
-    refetchInterval: 10_000,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!publicClient || !address) {
         return {
@@ -294,6 +358,104 @@ export function useYoulinProfile(address?: Address) {
   });
 }
 
+export function useGenesisTreasury(address?: Address) {
+  const publicClient = usePublicClient({ chainId: youlinDeployment.chainId });
+
+  return useQuery({
+    queryKey: ["youlin", "genesis", genesisTreasuryAddress, address],
+    enabled: isGenesisDeployed && Boolean(publicClient),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      if (!publicClient) throw new Error("Monad RPC 暂不可用。");
+      const common = {
+        address: genesisTreasuryAddress,
+        abi: genesisTreasuryAbi
+      } as const;
+      const base = await publicClient.multicall({
+        allowFailure: false,
+        contracts: [
+          { ...common, functionName: "totalDonated" },
+          { ...common, functionName: "donorCount" },
+          { ...common, functionName: "perAddressCap" },
+          { ...common, functionName: "votingDuration" },
+          { ...common, functionName: "availableBalance" },
+          { ...common, functionName: "reservedBalance" },
+          {
+            ...common,
+            functionName: "cumulativeDonationOf",
+            args: [address ?? "0x0000000000000000000000000000000000000000"]
+          },
+          { ...common, functionName: "proposalCount" },
+          { ...common, functionName: "GENESIS_PROJECT_ID" }
+        ]
+      });
+      const proposalCount = base[7] as bigint;
+      const ids = Array.from({ length: Number(proposalCount) }, (_, index) =>
+        BigInt(index + 1)
+      );
+      const rows =
+        ids.length === 0
+          ? []
+          : await publicClient.multicall({
+              allowFailure: false,
+              contracts: ids.flatMap((id) => [
+                {
+                  ...common,
+                  functionName: "getProposal",
+                  args: [id]
+                },
+                {
+                  ...common,
+                  functionName: "hasVoted",
+                  args: [
+                    id,
+                    address ??
+                      "0x0000000000000000000000000000000000000000"
+                  ]
+                }
+              ])
+            });
+      const proposals = ids
+        .map((id, index) => {
+          const row = rows[index * 2] as GenesisProposalTuple;
+          return {
+            id,
+            proposer: row[0],
+            recipient: row[1],
+            amount: row[2],
+            snapshotVersion: row[3],
+            votingEndsAt: row[4],
+            voterCount: row[5],
+            supportWeight: row[6],
+            rejectWeight: row[7],
+            finalized: row[8],
+            passed: row[9],
+            executed: row[10],
+            cancelled: row[11],
+            metadataURI: row[12],
+            metadataHash: row[13],
+            hasVoted: rows[index * 2 + 1] as boolean
+          } satisfies GenesisProposal;
+        })
+        .reverse();
+
+      return {
+        totalDonated: base[0] as bigint,
+        donorCount: base[1] as bigint,
+        perAddressCap: base[2] as bigint,
+        votingDuration: base[3] as bigint,
+        availableBalance: base[4] as bigint,
+        reservedBalance: base[5] as bigint,
+        cumulativeDonation: base[6] as bigint,
+        proposalCount,
+        genesisProjectId: base[8] as bigint,
+        proposals
+      } satisfies GenesisTreasuryState;
+    }
+  });
+}
+
 export type TransactionPhase =
   | { kind: "idle" }
   | { kind: "wallet"; label: string }
@@ -302,6 +464,7 @@ export type TransactionPhase =
   | { kind: "error"; label: string; message: string };
 
 export type ContractCall = {
+  contract?: "protocol" | "genesis";
   functionName: string;
   args?: readonly unknown[];
   value?: bigint;
@@ -317,8 +480,16 @@ export function useYoulinTransaction(
   const mutation = useWriteContract();
 
   const execute = useCallback(
-    async ({ functionName, args = [], value, label }: ContractCall) => {
-      if (!isYoulinDeployed) {
+    async ({
+      contract = "protocol",
+      functionName,
+      args = [],
+      value,
+      label
+    }: ContractCall) => {
+      const isDeployed =
+        contract === "genesis" ? isGenesisDeployed : isYoulinDeployed;
+      if (!isDeployed) {
         throw new Error("Monad Testnet 合约尚未部署，当前不会发送交易。");
       }
       if (!connection.isConnected) {
@@ -334,8 +505,11 @@ export function useYoulinTransaction(
       try {
         onPhase({ kind: "wallet", label });
         const hash = await mutation.mutateAsync({
-          address: protocolAddress,
-          abi: protocolAbi,
+          address:
+            contract === "genesis"
+              ? genesisTreasuryAddress
+              : protocolAddress,
+          abi: contract === "genesis" ? genesisTreasuryAbi : protocolAbi,
           functionName,
           args,
           value,
@@ -366,6 +540,23 @@ export function useYoulinTransaction(
 
 export function readableContractError(error: unknown) {
   if (!(error instanceof Error)) return "未知交易错误";
+  const friendlyErrors: Array<[string, string]> = [
+    ["DonationExceedsRemaining", "捐款金额超过本轮项目的剩余可募金额"],
+    ["DonationCapExceeded", "本次捐款会超过该地址通过创世项目累计获得 100 R 的上限"],
+    ["NotEligibleAtSnapshot", "该地址在提案快照时尚未向创世项目捐款，不能参与本次投票"],
+    ["AlreadyVoted", "该地址已经对本提案投过票"],
+    ["VotingStillActive", "投票期尚未结束"],
+    ["VotingEnded", "本提案投票期已经结束"],
+    ["NotEnoughVoters", "实际投票地址不足 3 个，本提案不能通过"],
+    ["InsufficientAvailableBalance", "创世金库当前可提案余额不足"],
+    ["ProposalNotPassed", "本提案未达到通过条件"],
+    ["ProposalAlreadyExecuted", "本提案已经执行"],
+    ["WalletNotConnected", "请先连接钱包"],
+    ["WrongNetwork", "请先切换到 Monad Testnet"]
+  ];
+  for (const [signature, message] of friendlyErrors) {
+    if (error.message.includes(signature)) return message;
+  }
   const match = error.message.match(
     /(?:reverted with custom error|reason:)\s*['"]?([^'"\n]+)/
   );

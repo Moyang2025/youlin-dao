@@ -7,4 +7,6 @@ export const youlinDeployment = {
   protocol: "0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
   reputation: "0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3",
   participation: "0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF",
+  genesisTreasury: "0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
+  genesisDeployed: true,
 } as const;

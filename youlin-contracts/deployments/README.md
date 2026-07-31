@@ -1,16 +1,13 @@
-# 部署记录
+# 部署与演示记录
 
-Monad Testnet 部署完成后，脚本写入 `monad-testnet.json`。文件必须包含 chain ID、三个合约地址、部署交易、验证状态、部署提交和 bootstrap 关闭交易；不得包含私钥、助记词或服务密钥。
+- `monad-testnet.json`：四份合约地址、部署/授权交易、Sourcify 验证链接与冻结配置；
+- `demo-projects.json`：四个由真实交易创建的协议项目和完整生命周期交易；
+- `genesis-demo.json`：三名真实捐赠者、创世提案、三票赞成、结算与执行交易；
+- `demo-wallets.public.json`：只包含公开地址和演示角色，不包含私钥。
 
-部署前不得创建占位地址文件冒充已部署结果。标准顺序：
+`demo-wallets.private.json`、`.env`、助记词和任何服务密钥均不得提交。链上核验：
 
-1. `npm run deploy:monad`
-2. `npm run record:monad`
-3. `npm run check:monad`
-4. 在 Monadscan/Sourcify 验证三个合约并更新 verification 字段
-5. `npm run bootstrap:demo`，确认 `bootstrap.closed = true`
-6. `npm run seed:demo`
-7. `npm run export:abi`
-
-Ignition 的完整 journal 保存在 `ignition/deployments/chain-10143/`，公开
-仓库保留该目录以便复核部署交易，但不得包含任何 `.env`。
+```powershell
+npm run check:monad
+npm run check:demo
+```

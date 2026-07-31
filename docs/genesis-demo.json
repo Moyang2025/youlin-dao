@@ -1,0 +1,63 @@
+{
+  "chainId": 10143,
+  "treasury": "0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
+  "generatedAt": "2026-07-31T10:06:10.093Z",
+  "rule": "At least 3 actual voters; support >= 66% of cast log weights; abstention is neutral.",
+  "weightFormula": "ln(1 + cumulative donation in MON) at proposal snapshot",
+  "donors": [
+    "0x694FFC8ae867501d1141A8b9b1140678f65D3c63",
+    "0x50A72742aE4B78e45215fC620c9817939d83B9A7",
+    "0x93f4418cc2742C6B348fbc9561Fdfc5EAc404C49"
+  ],
+  "donationPerDonorMON": "0.01",
+  "proposal": {
+    "id": "1",
+    "recipient": "0xD2626Fc39594f37e2e29Af5E8fB139EF8Bc16d46",
+    "amountMON": "0.005",
+    "metadataURI": "data:application/json;charset=utf-8,%7B%22title%22%3A%22%E5%88%9B%E4%B8%96%E9%87%91%E5%BA%93%E9%A6%96%E7%AC%94%E7%A4%BE%E5%8C%BA%E6%B2%BB%E7%90%86%E6%BC%94%E7%A4%BA%E6%94%AF%E5%87%BA%22%2C%22purpose%22%3A%22%E9%AA%8C%E8%AF%81%E4%B8%89%E5%90%8D%E7%9C%9F%E5%AE%9E%E6%8D%90%E8%B5%A0%E8%80%85%E3%80%81%E5%AF%B9%E6%95%B0%E5%8A%A0%E6%9D%83%E6%8A%95%E7%A5%A8%E3%80%8166%25%20%E9%97%A8%E6%A7%9B%E4%B8%8E%E9%93%BE%E4%B8%8A%E6%89%A7%E8%A1%8C%E9%97%AD%E7%8E%AF%E3%80%82%22%2C%22recipient%22%3A%220xD2626Fc39594f37e2e29Af5E8fB139EF8Bc16d46%22%2C%22amountMON%22%3A%220.005%22%7D",
+    "metadataHash": "0xd30123a8112a7222d1caf38a6b765e4a8d38c79a6e23145e24e47e1910a862bd",
+    "result": "passed-and-executed"
+  },
+  "transactions": [
+    {
+      "label": "Temporarily set demo voting duration to 60 seconds",
+      "hash": "0x4975dfbf3b4c30de75050753ccfe1dc87f5f6fb4b457bdec94d9923c677b24d2"
+    },
+    {
+      "label": "Genesis donation 1",
+      "hash": "0x669cc74448dfbb9e15c4c51d91ff45de6a530d68e0b4914f6b714e4eb95eb49e"
+    },
+    {
+      "label": "Genesis donation 2",
+      "hash": "0x1f18e5d9f4d2fed6debff86602ff45e7f7159fc70880cc1e9bba5699349b0fc1"
+    },
+    {
+      "label": "Genesis donation 3",
+      "hash": "0xac4b360ee52fa17afe72bf7f982990db94a56a092445f199fe05ef6433f7021c"
+    },
+    {
+      "label": "Create genesis treasury demo proposal",
+      "hash": "0xf494ca92c2c3cf84db8b125e2957c2c914c96b51a2a4443bc03a246e693ebe83"
+    },
+    {
+      "label": "Genesis support vote 1",
+      "hash": "0xb9cbdc428b7242c927071ffb236f9f2f342b8dccee9d2949e9f417815b53fd79"
+    },
+    {
+      "label": "Genesis support vote 2",
+      "hash": "0x5aa6afcce1228ea69d527709341451550c06e4605a497e55f91703889f9f93be"
+    },
+    {
+      "label": "Genesis support vote 3",
+      "hash": "0x18822c117d120fe1fd33be6d85374dc0c6716ef85af49a8c0d3da85cde1dc3bc"
+    },
+    {
+      "label": "Finalize genesis proposal",
+      "hash": "0xd14233d852da356789ea4d7e8cd3f95483d48922bf352dc41363cead622c9c1e"
+    },
+    {
+      "label": "Execute genesis proposal",
+      "hash": "0x74fae653dbc0e6b3b739931b176410010eb993cc58a39548024dfd983efda0a4"
+    }
+  ]
+}

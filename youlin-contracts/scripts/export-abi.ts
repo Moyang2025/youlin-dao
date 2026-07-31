@@ -10,6 +10,7 @@ type Deployment = {
     YoulinProtocol: string;
     YoulinReputation: string;
     YoulinParticipation: string;
+    YoulinGenesisTreasury?: string;
   };
 };
 
@@ -27,6 +28,7 @@ const contractNames = [
   "YoulinProtocol",
   "YoulinReputation",
   "YoulinParticipation",
+  "YoulinGenesisTreasury",
 ] as const;
 
 await mkdir(frontendContractsDirectory, { recursive: true });
@@ -79,6 +81,10 @@ export const youlinDeployment = {
   protocol: ${JSON.stringify(addresses.YoulinProtocol)},
   reputation: ${JSON.stringify(addresses.YoulinReputation)},
   participation: ${JSON.stringify(addresses.YoulinParticipation)},
+  genesisTreasury: ${JSON.stringify(
+    addresses.YoulinGenesisTreasury ?? zeroAddress,
+  )},
+  genesisDeployed: ${Boolean(addresses.YoulinGenesisTreasury)},
 } as const;
 `;
 await writeFile(

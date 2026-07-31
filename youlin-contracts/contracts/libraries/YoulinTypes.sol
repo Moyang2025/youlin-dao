@@ -25,6 +25,7 @@ library YoulinTypes {
         MidScoreReward,
         FinalScoreReward,
         HighScoreBonus,
-        ChallengeReward
+        ChallengeReward,
+        GenesisDonation
     }
 }

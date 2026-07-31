@@ -10,6 +10,7 @@
     "test:coverage": "hardhat test --coverage",
     "deploy:local": "hardhat ignition deploy ignition/modules/Youlin.ts --network hardhat",
     "deploy:monad": "hardhat ignition deploy ignition/modules/Youlin.ts --network monadTestnet",
+    "deploy:genesis:monad": "hardhat ignition deploy ignition/modules/YoulinGenesis.ts --network monadTestnet",
     "wallets:create": "tsx scripts/create-demo-wallets.ts",
     "wallets:fund": "tsx scripts/fund-demo-wallets.ts",
     "record:monad": "tsx scripts/record-deployment.ts",
@@ -17,6 +18,7 @@
     "check:demo": "tsx scripts/check-demo.ts",
     "bootstrap:demo": "tsx scripts/bootstrap-demo.ts",
     "seed:demo": "tsx scripts/seed-demo-projects.ts",
+    "seed:genesis": "tsx scripts/seed-genesis-lifecycle.ts",
     "export:abi": "tsx scripts/export-abi.ts"
   },
   "dependencies": {

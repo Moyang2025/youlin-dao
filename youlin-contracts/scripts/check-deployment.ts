@@ -12,12 +12,14 @@ import {
 import protocolArtifact from "../artifacts/contracts/YoulinProtocol.sol/YoulinProtocol.json" with { type: "json" };
 import participationArtifact from "../artifacts/contracts/YoulinParticipation.sol/YoulinParticipation.json" with { type: "json" };
 import reputationArtifact from "../artifacts/contracts/YoulinReputation.sol/YoulinReputation.json" with { type: "json" };
+import genesisTreasuryArtifact from "../artifacts/contracts/YoulinGenesisTreasury.sol/YoulinGenesisTreasury.json" with { type: "json" };
 
 type Deployment = {
   contracts: {
     YoulinProtocol: Address;
     YoulinReputation: Address;
     YoulinParticipation: Address;
+    YoulinGenesisTreasury?: Address;
   };
 };
 
@@ -90,3 +92,81 @@ if (!hasReputationRole || !hasParticipationRole) {
   throw new Error("Protocol roles are not fully configured");
 }
 console.log("Deployment wiring and protocol roles verified.");
+
+const genesisTreasury = deployment.contracts.YoulinGenesisTreasury;
+if (genesisTreasury !== undefined) {
+  const [
+    configuredGenesisReputation,
+    configuredGenesisParticipation,
+    hasGenesisReputationRole,
+    hasGenesisParticipationRole,
+    perAddressCap,
+    votingDuration,
+    passBps,
+    minimumVoters,
+  ] = (await Promise.all([
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "reputation",
+    }),
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "participation",
+    }),
+    client.readContract({
+      address: reputation,
+      abi: reputationArtifact.abi as Abi,
+      functionName: "hasRole",
+      args: [reputationRole, genesisTreasury],
+    }),
+    client.readContract({
+      address: participation,
+      abi: participationArtifact.abi as Abi,
+      functionName: "hasRole",
+      args: [participationRole, genesisTreasury],
+    }),
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "perAddressCap",
+    }),
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "votingDuration",
+    }),
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "PASS_BPS",
+    }),
+    client.readContract({
+      address: genesisTreasury,
+      abi: genesisTreasuryArtifact.abi as Abi,
+      functionName: "MIN_VOTERS",
+    }),
+  ])) as [Address, Address, boolean, boolean, bigint, bigint, bigint, bigint];
+
+  if (
+    configuredGenesisReputation.toLowerCase() !== reputation.toLowerCase() ||
+    configuredGenesisParticipation.toLowerCase() !== participation.toLowerCase()
+  ) {
+    throw new Error("Genesis treasury R/P address mismatch");
+  }
+  if (!hasGenesisReputationRole || !hasGenesisParticipationRole) {
+    throw new Error("Genesis treasury roles are not fully configured");
+  }
+  if (
+    perAddressCap !== 100n * 10n ** 18n ||
+    votingDuration !== 600n ||
+    passBps !== 6_600n ||
+    minimumVoters !== 3n
+  ) {
+    throw new Error("Genesis treasury governance configuration mismatch");
+  }
+  console.log(
+    "Genesis treasury wiring, roles, 100 R cap, 10-minute voting, 66% threshold and 3-voter minimum verified.",
+  );
+}

@@ -1961,6 +1961,167 @@ main {
   display: inline-flex;
 }
 
+.genesis-spotlight {
+  width: min(1180px, calc(100% - 40px));
+  margin: 20px auto;
+  padding: 26px;
+  border: 1px solid rgba(130, 105, 194, 0.28);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 8% 15%, rgba(134, 108, 214, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(246, 243, 255, 0.98), rgba(238, 248, 244, 0.98));
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto auto;
+  align-items: center;
+  gap: 22px;
+  box-shadow: 0 18px 44px rgba(48, 45, 74, 0.08);
+}
+
+.genesis-symbol {
+  width: 66px;
+  height: 66px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(145deg, #7864c8, #2f7368);
+  font-family: var(--font-serif);
+  font-size: 28px;
+  box-shadow: 0 12px 26px rgba(91, 73, 157, 0.23);
+}
+
+.genesis-copy h2 {
+  margin: 5px 0 7px;
+  font-family: var(--font-serif);
+  font-size: 24px;
+}
+
+.genesis-copy p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.genesis-metrics,
+.genesis-ledger,
+.proposal-vote-metrics {
+  display: grid;
+  gap: 9px;
+}
+
+.genesis-metrics {
+  grid-template-columns: repeat(3, minmax(92px, 1fr));
+}
+
+.genesis-metrics div,
+.genesis-ledger div,
+.proposal-vote-metrics div {
+  min-width: 94px;
+  padding: 10px 12px;
+  border: 1px solid rgba(62, 89, 81, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.genesis-metrics span,
+.genesis-metrics strong,
+.genesis-ledger span,
+.genesis-ledger strong,
+.proposal-vote-metrics span,
+.proposal-vote-metrics strong {
+  display: block;
+}
+
+.genesis-metrics span,
+.genesis-ledger span,
+.proposal-vote-metrics span {
+  margin-bottom: 3px;
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+
+.genesis-metrics strong,
+.genesis-ledger strong,
+.proposal-vote-metrics strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.genesis-spotlight > .app-button {
+  width: auto;
+  white-space: nowrap;
+}
+
+.genesis-panel {
+  gap: 20px;
+}
+
+.genesis-ledger {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.genesis-section {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.genesis-section .section-heading {
+  margin-bottom: 14px;
+}
+
+.genesis-section .section-heading h3 {
+  margin: 3px 0 0;
+  font-family: var(--font-serif);
+  font-size: 21px;
+}
+
+.genesis-proposals {
+  display: grid;
+  gap: 14px;
+}
+
+.genesis-proposal-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.genesis-proposal-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.genesis-proposal-card > header span,
+.genesis-proposal-card > header strong {
+  display: block;
+}
+
+.genesis-proposal-card > header span {
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+
+.genesis-proposal-card > header strong {
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+.genesis-proposal-card > p {
+  margin: 13px 0;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.proposal-vote-metrics {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 @media (max-width: 640px) {
   .deployment-banner,
   .transaction-status {
@@ -1978,6 +2139,29 @@ main {
   }
 
   .modal-action-row .app-button {
+    width: 100%;
+  }
+
+  .genesis-spotlight {
+    width: calc(100% - 24px);
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .genesis-symbol {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+    font-size: 23px;
+  }
+
+  .genesis-metrics,
+  .genesis-ledger,
+  .proposal-vote-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .genesis-spotlight > .app-button {
     width: 100%;
   }
 }

@@ -107,6 +107,29 @@ export async function deploySystem() {
 
 export type TestSystem = Awaited<ReturnType<typeof deploySystem>>;
 
+export async function deployGenesisTreasury(
+  system: TestSystem,
+  votingDuration = 120n,
+  perAddressCap = parseEther("100"),
+) {
+  const genesis = await viem.deployContract("YoulinGenesisTreasury", [
+    system.admin.account.address,
+    system.reputation.address,
+    system.participation.address,
+    votingDuration,
+    perAddressCap,
+  ]);
+  await system.reputation.write.grantRole([
+    await system.reputation.read.PROTOCOL_ROLE(),
+    genesis.address,
+  ]);
+  await system.participation.write.grantRole([
+    await system.participation.read.PROTOCOL_ROLE(),
+    genesis.address,
+  ]);
+  return genesis;
+}
+
 export async function createActivatedProject(system: TestSystem) {
   const block = await publicClient.getBlock();
   await system.protocol.write.createProjectDraft(

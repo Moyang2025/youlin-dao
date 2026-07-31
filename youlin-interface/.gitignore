@@ -9,5 +9,6 @@ site-static
 .pw-cache
 .playwright-cli
 output/playwright
+output/sites
 .env*
 !.env.example
