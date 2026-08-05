@@ -128,6 +128,18 @@ type ProjectContentTuple = readonly [
   Hash
 ];
 
+type ProjectInitiatorsTuple = readonly [
+  readonly Address[],
+  readonly boolean[],
+  readonly bigint[]
+];
+
+export type ProjectInitiator = {
+  account: Address;
+  accepted: boolean;
+  stake: bigint;
+};
+
 export type ProjectMetadata = {
   name?: string;
   title?: string;
@@ -158,7 +170,18 @@ export type ChainProject = {
   midEvidenceHash: Hash;
   finalEvidenceURI: string;
   finalEvidenceHash: Hash;
+  initiators: ProjectInitiator[];
   metadata?: ProjectMetadata;
+};
+
+export type InitiatorChainProfile = ProjectInitiator & {
+  profile: AccountProfile;
+  total: bigint;
+  locked: bigint;
+  available: bigint;
+  participated: bigint[];
+  initiated: bigint[];
+  hasGenesisCredential: boolean;
 };
 
 type GenesisProposalTuple = readonly [
@@ -277,14 +300,21 @@ export function useYoulinProjects() {
             abi: protocolAbi,
             functionName: "getProjectContent",
             args: [id]
+          },
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getInitiators",
+            args: [id]
           }
         ])
       });
       const projects = await Promise.all(
         ids.map(async (id, index) => {
-          const core = views[index * 3] as ProjectCoreTuple;
-          const times = views[index * 3 + 1] as ProjectTimesTuple;
-          const content = views[index * 3 + 2] as ProjectContentTuple;
+          const core = views[index * 4] as ProjectCoreTuple;
+          const times = views[index * 4 + 1] as ProjectTimesTuple;
+          const content = views[index * 4 + 2] as ProjectContentTuple;
+          const initiatorTuple = views[index * 4 + 3] as ProjectInitiatorsTuple;
           const metadata = await fetchMetadata(content[0]);
           return {
             id,
@@ -306,11 +336,131 @@ export function useYoulinProjects() {
             midEvidenceHash: content[3],
             finalEvidenceURI: content[4],
             finalEvidenceHash: content[5],
+            initiators: initiatorTuple[0].map((account, initiatorIndex) => ({
+              account,
+              accepted: initiatorTuple[1][initiatorIndex] ?? false,
+              stake: initiatorTuple[2][initiatorIndex] ?? 0n
+            })),
             metadata
           } satisfies ChainProject;
         })
       );
       return projects.reverse();
+    }
+  });
+}
+
+export function useYoulinInitiatorProfiles(project?: ChainProject) {
+  const publicClient = usePublicClient({ chainId: youlinDeployment.chainId });
+  const initiatorKey =
+    project?.initiators
+      .map(({ account, accepted, stake }) => `${account}:${accepted}:${stake}`)
+      .join("|") ?? "";
+
+  return useQuery({
+    queryKey: [
+      "youlin",
+      "project-initiators",
+      protocolAddress,
+      project?.id.toString(),
+      initiatorKey
+    ],
+    enabled:
+      isYoulinDeployed &&
+      isProfileDeployed &&
+      isGenesisDeployed &&
+      Boolean(publicClient && project && project.initiators.length > 0),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      if (!publicClient || !project) return [] as InitiatorChainProfile[];
+
+      const [genesisProjectId, projectCount] = (await Promise.all([
+        publicClient.readContract({
+          address: genesisTreasuryAddress,
+          abi: genesisTreasuryAbi,
+          functionName: "GENESIS_PROJECT_ID"
+        }),
+        publicClient.readContract({
+          address: protocolAddress,
+          abi: protocolAbi,
+          functionName: "projectCount"
+        })
+      ])) as [bigint, bigint];
+      const rows = await publicClient.multicall({
+        allowFailure: false,
+        contracts: project.initiators.flatMap(({ account }) => [
+          {
+            address: profileRegistryAddress,
+            abi: profileRegistryAbi,
+            functionName: "getProfile",
+            args: [account]
+          },
+          {
+            address: reputationAddress,
+            abi: reputationAbi,
+            functionName: "balanceOf",
+            args: [account]
+          },
+          {
+            address: reputationAddress,
+            abi: reputationAbi,
+            functionName: "lockedBalanceOf",
+            args: [account]
+          },
+          {
+            address: reputationAddress,
+            abi: reputationAbi,
+            functionName: "availableBalanceOf",
+            args: [account]
+          },
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getParticipatedProjects",
+            args: [account, 0n, projectCount]
+          },
+          {
+            address: protocolAddress,
+            abi: protocolAbi,
+            functionName: "getInitiatedProjects",
+            args: [account, 0n, projectCount]
+          },
+          {
+            address: participationAddress,
+            abi: participationAbi,
+            functionName: "hasCredential",
+            args: [account, genesisProjectId]
+          }
+        ])
+      });
+
+      return project.initiators.map((initiator, index) => {
+        const offset = index * 7;
+        const accountProfile = rows[offset] as readonly [
+          string,
+          string,
+          string,
+          bigint,
+          boolean
+        ];
+        return {
+          ...initiator,
+          profile: {
+            nickname: accountProfile[0],
+            avatarURI: accountProfile[1],
+            bio: accountProfile[2],
+            updatedAt: accountProfile[3],
+            exists: accountProfile[4]
+          },
+          total: rows[offset + 1] as bigint,
+          locked: rows[offset + 2] as bigint,
+          available: rows[offset + 3] as bigint,
+          participated: [...(rows[offset + 4] as readonly bigint[])],
+          initiated: [...(rows[offset + 5] as readonly bigint[])],
+          hasGenesisCredential: rows[offset + 6] as boolean
+        } satisfies InitiatorChainProfile;
+      });
     }
   });
 }

@@ -31,6 +31,7 @@ import {
   shortAddress,
   useYoulinAccountProfile,
   useGenesisTreasury,
+  useYoulinInitiatorProfiles,
   useYoulinProfile,
   useYoulinProjects,
   useYoulinTransaction,
@@ -39,6 +40,7 @@ import {
   type ContractCall,
   type GenesisProposal,
   type GenesisTreasuryState,
+  type InitiatorChainProfile,
   type TransactionPhase
 } from "@/lib/contracts/youlin";
 import { youlinDeployment } from "@/lib/contracts/addresses";
@@ -483,6 +485,7 @@ export default function Home() {
         <ModalSheet
           modal={modal}
           project={selectedProject}
+          projects={projects}
           address={connection.address}
           profile={profile}
           accountProfile={accountProfile}
@@ -990,6 +993,13 @@ function ProjectsView({
         {projects.map((project) => {
           const tone = projectTone(project);
           const raised = project.round1Raised + project.round2Raised;
+          const acceptedInitiators = project.initiators.filter(
+            (initiator) => initiator.accepted
+          );
+          const totalInitiatorStake = acceptedInitiators.reduce(
+            (total, initiator) => total + initiator.stake,
+            0n
+          );
           return (
             <article className="project-card" key={project.id.toString()}>
               <div className={`project-cover ${tone}`}>
@@ -1009,6 +1019,25 @@ function ProjectsView({
                 <div className="project-meta">
                   <span><Icon name="clock" size={15} /> {projectDeadline(project)}</span>
                   <span><Icon name="wallet" size={15} /> {shortAddress(project.projectWallet)}</span>
+                </div>
+                <div className="project-team-summary">
+                  <div className="initiator-avatar-stack" aria-hidden="true">
+                    {project.initiators.slice(0, 4).map((initiator) => (
+                      <span
+                        className={initiator.accepted ? "accepted" : "pending"}
+                        key={initiator.account}
+                      >
+                        {initiator.account.slice(2, 4).toUpperCase()}
+                      </span>
+                    ))}
+                  </div>
+                  <div>
+                    <strong>
+                      共同发起 {acceptedInitiators.length}/{project.initiators.length}
+                    </strong>
+                    <small>合计质押 {displayEther(totalInitiatorStake, 2)} R</small>
+                  </div>
+                  <span>链上团队</span>
                 </div>
                 <div className="card-actions">
                   <AppButton
@@ -1053,6 +1082,7 @@ function ProjectsView({
 function ModalSheet({
   modal,
   project,
+  projects,
   address,
   profile,
   accountProfile,
@@ -1064,6 +1094,7 @@ function ModalSheet({
 }: {
   modal: Exclude<Modal, null>;
   project?: ChainProject;
+  projects: ChainProject[];
   address?: Address;
   profile: typeof EMPTY_PROFILE;
   accountProfile?: AccountProfile;
@@ -1137,6 +1168,7 @@ function ModalSheet({
         {project && modal.type === "project" && (
           <ProjectDetail
             project={project}
+            projects={projects}
             address={address}
             run={run}
             pending={pending}
@@ -1150,7 +1182,12 @@ function ModalSheet({
           />
         )}
         {project && modal.type === "donate" && (
-          <DonationForm project={project} run={run} pending={pending} />
+          <DonationForm
+            project={project}
+            projects={projects}
+            run={run}
+            pending={pending}
+          />
         )}
         {project && modal.type === "score" && (
           <ScoreForm project={project} stage={modal.stage} run={run} pending={pending} />
@@ -1712,14 +1749,233 @@ function ReputationDetail({ profile }: { profile: typeof EMPTY_PROFILE }) {
   );
 }
 
+const avatarSource = (uri: string) =>
+  uri.startsWith("ipfs://")
+    ? `https://ipfs.io/ipfs/${uri.slice("ipfs://".length)}`
+    : /^https?:\/\//i.test(uri)
+      ? uri
+      : "";
+
+function InitiatorAvatar({ initiator }: { initiator: InitiatorChainProfile }) {
+  const source = avatarSource(initiator.profile.avatarURI);
+  const [failed, setFailed] = useState(false);
+  const fallback = (initiator.profile.nickname || initiator.account.slice(2, 4))
+    .slice(0, 1)
+    .toUpperCase();
+  return (
+    <span className="initiator-avatar">
+      {source && !failed ? (
+        <img
+          src={source}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        fallback
+      )}
+    </span>
+  );
+}
+
+function InitiatorTrustPanel({
+  project,
+  projects
+}: {
+  project: ChainProject;
+  projects: ChainProject[];
+}) {
+  const profilesQuery = useYoulinInitiatorProfiles(project);
+  const [expanded, setExpanded] = useState<Address>();
+  const profiles = profilesQuery.data ?? [];
+  const acceptedProfiles = profiles.filter((initiator) => initiator.accepted);
+  const acceptedInitiators = project.initiators.filter(
+    (initiator) => initiator.accepted
+  );
+  const totalStake = acceptedInitiators.reduce(
+    (total, initiator) => total + initiator.stake,
+    0n
+  );
+  const currentTotalR = acceptedProfiles.reduce(
+    (total, initiator) => total + initiator.total,
+    0n
+  );
+
+  return (
+    <section className="initiator-trust-panel" aria-label="共同发起人信用概览">
+      <div className="initiator-panel-heading">
+        <div>
+          <span className="section-kicker">ONCHAIN INITIATOR RECORDS</span>
+          <h3>共同发起人信用概览</h3>
+        </div>
+        <span className="live-chain-label"><i /> 链上实时数据</span>
+      </div>
+      <p className="initiator-disclaimer">
+        “当前总 R”会随账户后续活动变化；“本项目质押 R”是该发起人为本项目锁定的责任额度。
+      </p>
+      <div className="initiator-overview-metrics">
+        <div>
+          <span>正式共同发起</span>
+          <strong>{acceptedInitiators.length}/{project.initiators.length}</strong>
+        </div>
+        <div>
+          <span>本项目合计质押</span>
+          <strong>{displayEther(totalStake, 2)} R</strong>
+        </div>
+        <div>
+          <span>团队当前总 R</span>
+          <strong>{profilesQuery.isLoading ? "读取中…" : `${displayEther(currentTotalR, 2)} R`}</strong>
+        </div>
+      </div>
+
+      {profilesQuery.isError && (
+        <div className="initiator-read-error">
+          <Icon name="shield" size={17} />
+          <span>发起人 R/P 履历暂时读取失败；地址、接受状态和项目质押 R 仍来自项目合约。</span>
+          <button onClick={() => void profilesQuery.refetch()}>重新读取</button>
+        </div>
+      )}
+
+      <div className="initiator-list">
+        {profilesQuery.isLoading && (
+          <div className="initiator-loading">正在从 Monad Testnet 恢复全部发起人 R 与 P 履历…</div>
+        )}
+        {!profilesQuery.isLoading && profiles.length === 0 && !profilesQuery.isError && (
+          <div className="initiator-loading">该项目没有登记共同发起人。</div>
+        )}
+        {profilesQuery.isError && project.initiators.map((initiator) => (
+          <div className="initiator-fallback-row" key={initiator.account}>
+            <span>{initiator.account.slice(2, 4).toUpperCase()}</span>
+            <div>
+              <strong>{shortAddress(initiator.account)}</strong>
+              <small>{initiator.accepted ? "已确认共同发起" : "邀请待确认"}</small>
+            </div>
+            <b>{displayEther(initiator.stake, 2)} R 质押</b>
+          </div>
+        ))}
+        {profiles.map((initiator) => {
+          const isExpanded = expanded === initiator.account;
+          const credentialCount =
+            initiator.participated.length +
+            (initiator.hasGenesisCredential ? 1 : 0);
+          const nickname = initiator.profile.exists && initiator.profile.nickname
+            ? initiator.profile.nickname
+            : shortAddress(initiator.account);
+          return (
+            <article
+              className={`initiator-card ${initiator.accepted ? "accepted" : "pending"}`}
+              key={initiator.account}
+            >
+              <button
+                className="initiator-card-summary"
+                onClick={() => setExpanded(isExpanded ? undefined : initiator.account)}
+                aria-expanded={isExpanded}
+              >
+                <InitiatorAvatar initiator={initiator} />
+                <span className="initiator-identity">
+                  <strong>{nickname}</strong>
+                  <small>{shortAddress(initiator.account)}</small>
+                </span>
+                <span className="initiator-role">
+                  {initiator.account.toLowerCase() === project.creator.toLowerCase() && <em>创建人</em>}
+                  <em>{initiator.accepted ? "已确认" : "待确认"}</em>
+                </span>
+                <span className="initiator-number">
+                  <small>当前总 R</small>
+                  <strong>{displayEther(initiator.total, 2)}</strong>
+                </span>
+                <span className="initiator-number">
+                  <small>项目质押 R</small>
+                  <strong>{displayEther(initiator.stake, 2)}</strong>
+                </span>
+                <span className="initiator-number">
+                  <small>P 履历</small>
+                  <strong>{credentialCount}</strong>
+                </span>
+                <Icon name="arrow" size={17} />
+              </button>
+
+              {isExpanded && (
+                <div className="initiator-history">
+                  {initiator.profile.bio && <p>{initiator.profile.bio}</p>}
+                  <div className="initiator-balance-row">
+                    <span>可用 R <strong>{displayEther(initiator.available, 2)}</strong></span>
+                    <span>锁定 R <strong>{displayEther(initiator.locked, 2)}</strong></span>
+                    <span>发起项目 <strong>{initiator.initiated.length}</strong></span>
+                    <a
+                      href={`${youlinDeployment.explorerUrl}/address/${initiator.account}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      浏览器验证 <Icon name="external" size={14} />
+                    </a>
+                  </div>
+                  <div className="initiator-history-columns">
+                    <div>
+                      <h4>项目参与凭证 P</h4>
+                      <ul>
+                        {initiator.hasGenesisCredential && (
+                          <li><b>创</b><span><strong>创世项目 P</strong><small>捐款者共治金库凭证</small></span></li>
+                        )}
+                        {initiator.participated.map((projectId) => {
+                          const historyProject = projects.find((item) => item.id === projectId);
+                          return (
+                            <li key={projectId.toString()}>
+                              <b>P</b>
+                              <span>
+                                <strong>{historyProject ? projectTitle(historyProject) : `项目 #${projectId}`}</strong>
+                                <small>{historyProject?.stateLabel ?? "链上项目参与凭证"}</small>
+                              </span>
+                            </li>
+                          );
+                        })}
+                        {credentialCount === 0 && <li className="empty-history">暂无项目 P</li>}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4>共同发起履历</h4>
+                      <ul>
+                        {initiator.initiated.map((projectId) => {
+                          const historyProject = projects.find((item) => item.id === projectId);
+                          return (
+                            <li key={projectId.toString()}>
+                              <b>R</b>
+                              <span>
+                                <strong>{historyProject ? projectTitle(historyProject) : `项目 #${projectId}`}</strong>
+                                <small>
+                                  {historyProject
+                                    ? `${historyProject.stateLabel}${historyProject.finalScore ? ` · ${historyProject.finalScore} 分` : ""}`
+                                    : "共同发起索引"}
+                                </small>
+                              </span>
+                            </li>
+                          );
+                        })}
+                        {initiator.initiated.length === 0 && <li className="empty-history">暂无发起履历</li>}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function ProjectDetail({
   project,
+  projects,
   address,
   run,
   pending,
   openModal
 }: {
   project: ChainProject;
+  projects: ChainProject[];
   address?: Address;
   run: (call: ContractCall, closeOnSuccess?: boolean) => Promise<void>;
   pending: boolean;
@@ -1752,6 +2008,7 @@ function ProjectDetail({
           </div>
         ))}
       </div>
+      <InitiatorTrustPanel project={project} projects={projects} />
       <div className="evidence-card">
         <Icon name="file" />
         <div>
@@ -1979,10 +2236,12 @@ function CredentialDetail({
 
 function DonationForm({
   project,
+  projects,
   run,
   pending
 }: {
   project: ChainProject;
+  projects: ChainProject[];
   run: (call: ContractCall) => Promise<void>;
   pending: boolean;
 }) {
@@ -2001,6 +2260,7 @@ function DonationForm({
           <span>{project.stateLabel} · 截止 {projectDeadline(project)}</span>
         </div>
       </div>
+      <InitiatorTrustPanel project={project} projects={projects} />
       <label className="amount-field">
         <span>捐款金额</span>
         <div>
