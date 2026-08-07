@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "demoOnly": true,
+  "network": "Monad Testnet",
+  "project": "乡村校园安全饮水计划",
+  "stage": "mid",
+  "summary": "演示用中期材料：设备清单已确认，首批净水设备已到货，安装和水质检测工作按计划推进。",
+  "evidence": [
+    "演示采购清单",
+    "演示设备到货记录",
+    "演示安装排期"
+  ],
+  "disclaimer": "这是黑客松流程演示材料，不表示现实项目已实施。"
+}

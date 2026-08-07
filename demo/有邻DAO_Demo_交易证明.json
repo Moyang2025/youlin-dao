@@ -1,0 +1,246 @@
+{
+  "title": "有邻 DAO 黑客松 Demo 成片",
+  "durationSeconds": 190,
+  "resolution": "1920x1080",
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "contracts": {
+    "YoulinProtocol": "0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
+    "YoulinReputation": "0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3",
+    "YoulinParticipation": "0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF",
+    "YoulinGenesisTreasury": "0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
+    "YoulinProfileRegistry": "0x3d6Bd044f11018114c1793E80Aed53d230D46Ac7"
+  },
+  "projectA": {
+    "id": "5",
+    "name": "乡村校园安全饮水计划",
+    "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/video-project-a.json",
+    "metadataHash": "0x35209fefbc007cc2af673ab1dd56159802f24e4022dde8319188acc5937b65d0",
+    "state": "Settled",
+    "targetMON": "30",
+    "round1MON": "15",
+    "round2MON": "15",
+    "midScore": 80,
+    "finalScore": 90,
+    "settled": true
+  },
+  "projectB": {
+    "id": "6",
+    "name": "偏远地区青少年编程启蒙工作",
+    "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/video-project-b.json",
+    "metadataHash": "0x5b8927cd8848e27deced74f11d59e15a9cb88186c759d3a967ab9a7d7ad39dbe",
+    "state": "Round1Funding",
+    "targetMON": "30",
+    "totalInitiatorStakeR": "30"
+  },
+  "allTransactions": [
+    {
+      "label": "为视频捐款账户 1 分配测试 MON",
+      "hash": "0x01951731bfee0099a311ead27cd2a02a3870029f4a8f3e43191fef68f7527e07",
+      "blockNumber": "51688421",
+      "timestamp": "2026-08-07T14:05:54.168Z"
+    },
+    {
+      "label": "为视频捐款账户 2 分配测试 MON",
+      "hash": "0x1f6540ba4ce97020cde559aaf60874f8c9009e6c200086723bd04be0ec203bd6",
+      "blockNumber": "51688434",
+      "timestamp": "2026-08-07T14:05:57.262Z"
+    },
+    {
+      "label": "为视频捐款账户 3 分配测试 MON",
+      "hash": "0xd69bf5808f5f0f5f8d8f166df2b3aed01e9651f48dcefc3209730aca9748879f",
+      "blockNumber": "51688441",
+      "timestamp": "2026-08-07T14:05:58.550Z"
+    },
+    {
+      "label": "项目 A：创建草案",
+      "hash": "0x499d083ae3e076ecbc76cf3950838269fa159de6075a64556d8a5dd12baa6c62",
+      "blockNumber": "51688448",
+      "timestamp": "2026-08-07T14:06:02.201Z"
+    },
+    {
+      "label": "项目 A：发起人 1 锁定 10 R",
+      "hash": "0x426c951dad5df39dc72bd12b2556dc1861c290fc09ce43af61e88ad733df0969",
+      "blockNumber": "51688459",
+      "timestamp": "2026-08-07T14:06:04.954Z"
+    },
+    {
+      "label": "项目 A：发起人 2 锁定 10 R",
+      "hash": "0xb6bcb8b3dc28b5984551dc1941e42580c5fefd39c6ba65d4c5ff9f145723c182",
+      "blockNumber": "51688467",
+      "timestamp": "2026-08-07T14:06:06.854Z"
+    },
+    {
+      "label": "项目 A：发起人 3 锁定 10 R",
+      "hash": "0xc01b46bc1f4d094608617500df2df381dcdcbe37850b10f7e25fb5409e09e1ed",
+      "blockNumber": "51688474",
+      "timestamp": "2026-08-07T14:06:09.240Z"
+    },
+    {
+      "label": "项目 A：达到共同发起门槛并激活",
+      "hash": "0x42ba1d2c119b8286e16ae13b081f8ca78bc3452d92d9ff6eb46386258f5f04d0",
+      "blockNumber": "51688482",
+      "timestamp": "2026-08-07T14:06:11.866Z"
+    },
+    {
+      "label": "项目 A：首轮捐款账户 1",
+      "hash": "0x85e12eab8abe11f89557de2bcc8181045d1967bb94c5a244611e7adfc6b88816",
+      "blockNumber": "51688493",
+      "timestamp": "2026-08-07T14:06:15.749Z"
+    },
+    {
+      "label": "项目 A：首轮捐款账户 2",
+      "hash": "0x4e35ca1e84df82ecdb4f55c976d26a98f54136f0a712d885701f2591d73d3407",
+      "blockNumber": "51688503",
+      "timestamp": "2026-08-07T14:06:18.195Z"
+    },
+    {
+      "label": "项目 A：首轮捐款账户 3",
+      "hash": "0x12f60db0badc3cf6aa2a8921f20659467d1301d33fb880c8f0164d818d344c21",
+      "blockNumber": "51688511",
+      "timestamp": "2026-08-07T14:06:21.156Z"
+    },
+    {
+      "label": "项目 A：捐款账户 1 领取首轮 R",
+      "hash": "0x9e8d7ad0131e1cdc02d8f29a978a31d99b33012b1114f8b34a6d398040a62ad1",
+      "blockNumber": "51688522",
+      "timestamp": "2026-08-07T14:06:23.850Z"
+    },
+    {
+      "label": "项目 A：捐款账户 2 领取首轮 R",
+      "hash": "0x410c0983ebc3d1321651de25a3dc3fcddf7e5ec97b09869af0a8d1d46931ab30",
+      "blockNumber": "51688532",
+      "timestamp": "2026-08-07T14:06:26.875Z"
+    },
+    {
+      "label": "项目 A：捐款账户 3 领取首轮 R",
+      "hash": "0x7690eaa52e1efb907190290cf4e9dc42c29bf0963b8fc9aa0d77cb000aab7cb8",
+      "blockNumber": "51688540",
+      "timestamp": "2026-08-07T14:06:29.875Z"
+    },
+    {
+      "label": "项目 A：领取第一阶段资金",
+      "hash": "0x075b81464ae70dcb1cb9aaa685d77b492219ae3c4bbdb89a21321078a88c39a8",
+      "blockNumber": "51688550",
+      "timestamp": "2026-08-07T14:06:32.261Z"
+    },
+    {
+      "label": "项目 A：提交中期材料",
+      "hash": "0x79a1a5ad28535b323b95aef3e3d2fb7ecd27d2fc1109a24674c18b3ab62b7d95",
+      "blockNumber": "51689243",
+      "timestamp": "2026-08-07T14:10:03.389Z"
+    },
+    {
+      "label": "项目 A：中期评分账户 1",
+      "hash": "0x54b5d0c88bb507f2c379e42b2ffbbbcde82b9a521292681580a977ed9b6a4f4e",
+      "blockNumber": "51689252",
+      "timestamp": "2026-08-07T14:10:06.637Z"
+    },
+    {
+      "label": "项目 A：中期评分账户 2",
+      "hash": "0x9fff30da3f5ac5cb1b6031a9dd4bf3e062b460225d8deb6738376deb424c0d8c",
+      "blockNumber": "51689261",
+      "timestamp": "2026-08-07T14:10:09.398Z"
+    },
+    {
+      "label": "项目 A：中期评分账户 3",
+      "hash": "0xbde614d4567dabbc913af52db255851edae7b2e57a4eeb3e34cad58f147910df",
+      "blockNumber": "51689270",
+      "timestamp": "2026-08-07T14:10:11.184Z"
+    },
+    {
+      "label": "项目 A：链上定分并开放第二轮",
+      "hash": "0x03473afc6cef4ff7fcf14e587d51060ffaa4f5bcdc600db4359042f7fc44cdba",
+      "blockNumber": "51689673",
+      "timestamp": "2026-08-07T14:12:14.111Z"
+    },
+    {
+      "label": "项目 A：第二轮捐款账户 1",
+      "hash": "0x1e5e8f64b7dc4c88a7bd77168698a3584448809d3ee501cb8daaaddaf4474051",
+      "blockNumber": "51689696",
+      "timestamp": "2026-08-07T14:12:21.357Z"
+    },
+    {
+      "label": "项目 A：第二轮捐款账户 2",
+      "hash": "0x8c59881b6a0abee397dac3eadc7b1742197272976a9e8561b599d84d02dc31f3",
+      "blockNumber": "51689707",
+      "timestamp": "2026-08-07T14:12:24.743Z"
+    },
+    {
+      "label": "项目 A：第二轮捐款账户 3",
+      "hash": "0x68310ae5c4b4c0dc5ab065c1be137ad1e52a5ac0127c85d351da689d1e18d92b",
+      "blockNumber": "51689715",
+      "timestamp": "2026-08-07T14:12:27.150Z"
+    },
+    {
+      "label": "项目 A：提交结项材料",
+      "hash": "0xd5978e778a620e46669f22370a733e8fe2d21a4479f28d51df19641d25f54542",
+      "blockNumber": "51689724",
+      "timestamp": "2026-08-07T14:12:30.299Z"
+    },
+    {
+      "label": "项目 A：结项评分账户 1",
+      "hash": "0x8608e1df00021240cabf04952309b377225609336f5fbaf95ce5abce42720653",
+      "blockNumber": "51689736",
+      "timestamp": "2026-08-07T14:12:33.145Z"
+    },
+    {
+      "label": "项目 A：结项评分账户 2",
+      "hash": "0x9b924f16b602b412269e1e788c827b1868612bcac6bce46ea4290c9872bc3ddc",
+      "blockNumber": "51689742",
+      "timestamp": "2026-08-07T14:12:35.578Z"
+    },
+    {
+      "label": "项目 A：结项评分账户 3",
+      "hash": "0x6f88819735b1e369be98400e277a2cbad97beecf7bdc610d00077ba077a38bc9",
+      "blockNumber": "51689754",
+      "timestamp": "2026-08-07T14:12:39.704Z"
+    },
+    {
+      "label": "项目 A：链上确定结项分",
+      "hash": "0xecdd38058de29d581f1eb406621d29994ab640d45f5020dff2936978da06f8d9",
+      "blockNumber": "51690131",
+      "timestamp": "2026-08-07T14:14:35.535Z"
+    },
+    {
+      "label": "项目 A：无挑战最终结算",
+      "hash": "0xe18d1e5ccc19b0c002a2ef4183901216b8149ded2cf04a1cb2c0eb53cfcad4f9",
+      "blockNumber": "51690741",
+      "timestamp": "2026-08-07T14:17:40.692Z"
+    },
+    {
+      "label": "项目 B：由 A 的捐款者创建草案",
+      "hash": "0x13b5dc00cd4e01baff93ca02425370a78189d4a79498c1bb33851304c79a0f5b",
+      "blockNumber": "51690756",
+      "timestamp": "2026-08-07T14:17:45.279Z"
+    },
+    {
+      "label": "项目 B：原项目 A 捐款者 1 锁定 10 R",
+      "hash": "0x3338996b9fec049d37f4e6162954130690d30744402b90f16a8d8e954881fdc1",
+      "blockNumber": "51690773",
+      "timestamp": "2026-08-07T14:17:50.456Z"
+    },
+    {
+      "label": "项目 B：原项目 A 捐款者 2 锁定 10 R",
+      "hash": "0xd46d515e163510ade7463aea80e044bf8f0762d7bd1cabfd3d00b527782b58cf",
+      "blockNumber": "51690784",
+      "timestamp": "2026-08-07T14:17:53.116Z"
+    },
+    {
+      "label": "项目 B：原项目 A 捐款者 3 锁定 10 R",
+      "hash": "0xb47cd4ccab2098b29d83bc10076eca9b881d4da8464cbbe8194197298b375743",
+      "blockNumber": "51690794",
+      "timestamp": "2026-08-07T14:17:55.667Z"
+    },
+    {
+      "label": "项目 B：达到共同发起门槛并激活",
+      "hash": "0xd347ce4a02b37606037cc418bbc448dafb046ef5fb93d72782303dd6d985f59f",
+      "blockNumber": "51690801",
+      "timestamp": "2026-08-07T14:18:02.611Z"
+    }
+  ],
+  "historicalSnapshotSource": "D:\\研二\\LXDAO共学\\有邻DAO\\黑客松\\youlin-contracts\\deployments\\demo-video-history.json",
+  "voice": "Microsoft Edge zh-CN-XiaoxiaoNeural synthesized narration; no background music",
+  "rawNarrationDurationSeconds": 205.25,
+  "audioTempoAdjustment": 1.0877053524112348
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "demoOnly": true,
+  "network": "Monad Testnet",
+  "project": "乡村校园安全饮水计划",
+  "stage": "final",
+  "summary": "演示用结项材料：净水设备安装完成，出水检测记录和校方签收记录已整理。",
+  "evidence": [
+    "演示安装完成记录",
+    "演示水质检测结果",
+    "演示校方签收记录"
+  ],
+  "disclaimer": "这是黑客松流程演示材料，不表示现实项目已实施。"
+}

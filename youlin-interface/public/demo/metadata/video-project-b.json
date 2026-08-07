@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "demoOnly": true,
+  "network": "Monad Testnet",
+  "name": "偏远地区青少年编程启蒙工作",
+  "category": "教育公平",
+  "summary": "Monad Testnet 演示项目：为偏远地区青少年提供基础编程设备、入门课程材料和由志愿讲师支持的编程工作坊。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "30",
+  "expectedDurationSeconds": 600,
+  "fundUse": [
+    { "item": "基础编程设备", "amountMON": "18" },
+    { "item": "课程材料与工作坊支持", "amountMON": "12" }
+  ],
+  "milestones": [
+    "完成需求确认",
+    "准备设备和课程材料",
+    "组织首期编程启蒙工作坊"
+  ],
+  "images": [],
+  "disclaimer": "本项目仅用于 Monad Testnet 黑客松演示，测试 MON 不代表现实捐赠。"
+}

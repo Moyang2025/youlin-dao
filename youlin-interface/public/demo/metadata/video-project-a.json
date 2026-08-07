@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "demoOnly": true,
+  "network": "Monad Testnet",
+  "name": "乡村校园安全饮水计划",
+  "category": "乡村教育与健康",
+  "summary": "Monad Testnet 演示项目：为乡村校园配置基础净水设备，并通过阶段材料与水质检测记录展示两轮募捐和捐款者监督流程。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "30",
+  "expectedDurationSeconds": 600,
+  "fundUse": [
+    { "item": "净水设备与首批滤芯", "amountMON": "15" },
+    { "item": "安装、检测与后续维护", "amountMON": "15" }
+  ],
+  "milestones": [
+    "第一轮达到阶段目标",
+    "提交采购与安装进度",
+    "捐款者完成中期评分",
+    "第二轮弹性募捐",
+    "提交水质检测与签收记录",
+    "捐款者完成结项评分"
+  ],
+  "images": [],
+  "disclaimer": "本项目仅用于 Monad Testnet 黑客松演示，测试 MON 不代表现实捐赠。"
+}

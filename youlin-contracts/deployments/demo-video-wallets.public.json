@@ -1,0 +1,20 @@
+{
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "purpose": "A donors, scorers, and B initiators for the hackathon video",
+  "accounts": [
+    {
+      "label": "video-donor-1",
+      "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be"
+    },
+    {
+      "label": "video-donor-2",
+      "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E"
+    },
+    {
+      "label": "video-donor-3",
+      "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0"
+    }
+  ],
+  "generatedAt": "2026-08-07T13:59:42.186Z"
+}

@@ -1,0 +1,407 @@
+{
+  "schemaVersion": "1.0",
+  "source": "Historical eth_call snapshots at confirmed Monad Testnet blocks",
+  "generatedAt": "2026-08-07T14:55:08.046Z",
+  "snapshots": [
+    {
+      "key": "draft",
+      "label": "项目 A：创建草案",
+      "transactionHash": "0x499d083ae3e076ecbc76cf3950838269fa159de6075a64556d8a5dd12baa6c62",
+      "blockNumber": "51688448",
+      "projectId": "5",
+      "state": "Draft",
+      "targetMON": "30",
+      "round1MON": "0",
+      "round2MON": "0",
+      "midScore": 0,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        }
+      ]
+    },
+    {
+      "key": "activated",
+      "label": "项目 A：达到共同发起门槛并激活",
+      "transactionHash": "0x42ba1d2c119b8286e16ae13b081f8ca78bc3452d92d9ff6eb46386258f5f04d0",
+      "blockNumber": "51688482",
+      "projectId": "5",
+      "state": "Round1Funding",
+      "targetMON": "30",
+      "round1MON": "0",
+      "round2MON": "0",
+      "midScore": 0,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "0",
+          "round1MON": "0",
+          "round2MON": "0"
+        }
+      ]
+    },
+    {
+      "key": "round1",
+      "label": "项目 A：首轮捐款账户 3",
+      "transactionHash": "0x12f60db0badc3cf6aa2a8921f20659467d1301d33fb880c8f0164d818d344c21",
+      "blockNumber": "51688511",
+      "projectId": "5",
+      "state": "MidSubmissionPending",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "0",
+      "midScore": 0,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "0",
+          "availableR": "0",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        }
+      ]
+    },
+    {
+      "key": "midSubmitted",
+      "label": "项目 A：中期评分账户 3",
+      "transactionHash": "0xbde614d4567dabbc913af52db255851edae7b2e57a4eeb3e34cad58f147910df",
+      "blockNumber": "51689270",
+      "projectId": "5",
+      "state": "MidScoring",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "0",
+      "midScore": 0,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        }
+      ]
+    },
+    {
+      "key": "midFinalized",
+      "label": "项目 A：链上定分并开放第二轮",
+      "transactionHash": "0x03473afc6cef4ff7fcf14e587d51060ffaa4f5bcdc600db4359042f7fc44cdba",
+      "blockNumber": "51689673",
+      "projectId": "5",
+      "state": "Round2Funding",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "0",
+      "midScore": 80,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "5.1",
+          "availableR": "5.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "0"
+        }
+      ]
+    },
+    {
+      "key": "round2",
+      "label": "项目 A：第二轮捐款账户 3",
+      "transactionHash": "0x68310ae5c4b4c0dc5ab065c1be137ad1e52a5ac0127c85d351da689d1e18d92b",
+      "blockNumber": "51689715",
+      "projectId": "5",
+      "state": "FinalSubmissionPending",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "15",
+      "midScore": 80,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "10.1",
+          "availableR": "10.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "10.1",
+          "availableR": "10.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "10.1",
+          "availableR": "10.1",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        }
+      ]
+    },
+    {
+      "key": "finalSubmitted",
+      "label": "项目 A：结项评分账户 3",
+      "transactionHash": "0x6f88819735b1e369be98400e277a2cbad97beecf7bdc610d00077ba077a38bc9",
+      "blockNumber": "51689754",
+      "projectId": "5",
+      "state": "FinalScoring",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "15",
+      "midScore": 80,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        }
+      ]
+    },
+    {
+      "key": "finalFinalized",
+      "label": "项目 A：链上确定结项分",
+      "transactionHash": "0xecdd38058de29d581f1eb406621d29994ab640d45f5020dff2936978da06f8d9",
+      "blockNumber": "51690131",
+      "projectId": "5",
+      "state": "ChallengeWindow",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "15",
+      "midScore": 80,
+      "finalScore": 90,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        }
+      ]
+    },
+    {
+      "key": "settled",
+      "label": "项目 A：无挑战最终结算",
+      "transactionHash": "0xe18d1e5ccc19b0c002a2ef4183901216b8149ded2cf04a1cb2c0eb53cfcad4f9",
+      "blockNumber": "51690741",
+      "projectId": "5",
+      "state": "Settled",
+      "targetMON": "30",
+      "round1MON": "15",
+      "round2MON": "15",
+      "midScore": 80,
+      "finalScore": 90,
+      "settled": true,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "10.2",
+          "availableR": "10.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        }
+      ]
+    },
+    {
+      "key": "projectBActivated",
+      "label": "项目 B：达到共同发起门槛并激活",
+      "transactionHash": "0xd347ce4a02b37606037cc418bbc448dafb046ef5fb93d72782303dd6d985f59f",
+      "blockNumber": "51690801",
+      "projectId": "6",
+      "state": "Round1Funding",
+      "targetMON": "30",
+      "round1MON": "0",
+      "round2MON": "0",
+      "midScore": 0,
+      "finalScore": 0,
+      "settled": false,
+      "donors": [
+        {
+          "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+          "r": "10.2",
+          "availableR": "0.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+          "r": "10.2",
+          "availableR": "0.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        },
+        {
+          "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+          "r": "10.2",
+          "availableR": "0.2",
+          "projectAP": "1",
+          "round1MON": "5",
+          "round2MON": "5"
+        }
+      ]
+    }
+  ]
+}
