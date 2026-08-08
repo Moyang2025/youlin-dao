@@ -14,7 +14,9 @@
 ## 链上结果
 
 - Project A `#5`：乡村校园安全饮水计划；第一轮 15 MON、第二轮 15 MON、中期 80 分、结项 90 分，状态 `Settled`；
-- Project B `#6`：偏远地区青少年编程启蒙工作；由 A 的三位捐款者各锁定 10 R 后激活，状态 `Round1Funding`；
-- A→B 激活交易：`0xd347ce4a02b37606037cc418bbc448dafb046ef5fb93d72782303dd6d985f59f`。
+- Project B `#6`：视频录制时由 A 的三位捐款者各锁定 10 R 后激活；其一小时演示窗口结束后，因 0 MON 未达首轮目标而标记为 `Round1Failed`；
+- 实时问答 Project B `#7`：同名项目，由原三位账户重新锁定 30 R，状态 `Round1Funding`，第一轮截止北京时间 `2026-08-10 22:00`；
+- Project #7 激活交易：`0xd6bd033d19df49cd7ec526a787a0115ff258a72343fbaa0af79ff7386a885761`；
+- `demo-live-project-b.json` 保存 #6 结束与 #7 重建的 6 笔交易证明。
 
 演示项目、材料和 MON 均为 Monad Testnet 测试用途，不代表现实公益项目已经实施。

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "oldProjectId": "6",
+  "newProjectId": "7",
+  "name": "偏远地区青少年编程启蒙工作",
+  "requestedDeadline": "2026-08-10T22:00:00+08:00",
+  "round1DeadlineUnix": "1786370400",
+  "transactions": [
+    {
+      "label": "项目 #6：标记首轮失败并解锁发起质押",
+      "hash": "0x40525bb3b3792fc39a97db35c73da50c8ebc75f886eb56c64769e30eb76c7161",
+      "blockNumber": "51934140",
+      "confirmedAt": "2026-08-08T10:55:44.929Z"
+    },
+    {
+      "label": "项目 #7：创建同名长期募捐草案",
+      "hash": "0xfaad810dd0bd153cd7b865f18c7bb12ad586cf62467e5019b358505910bb24b4",
+      "blockNumber": "51934152",
+      "confirmedAt": "2026-08-08T10:55:50.040Z"
+    },
+    {
+      "label": "项目 #7：共同发起人 1 锁定 10 R",
+      "hash": "0xdcff6464998c15e119a8736d2f0040e642dc9b870ff6d7eef09b9b4da300c996",
+      "blockNumber": "51934167",
+      "confirmedAt": "2026-08-08T10:55:53.233Z"
+    },
+    {
+      "label": "项目 #7：共同发起人 2 锁定 10 R",
+      "hash": "0xc391e149f766e4e5b440b28402ee8a4c368a70ec03d0635a4b6d3ed9222060f3",
+      "blockNumber": "51934175",
+      "confirmedAt": "2026-08-08T10:55:55.469Z"
+    },
+    {
+      "label": "项目 #7：共同发起人 3 锁定 10 R",
+      "hash": "0xe18cec05de3a923c0183335f67c7e7390d913393115cc239099af4b3410c6f5c",
+      "blockNumber": "51934182",
+      "confirmedAt": "2026-08-08T10:55:56.903Z"
+    },
+    {
+      "label": "项目 #7：达到门槛并激活第一轮募捐",
+      "hash": "0xd6bd033d19df49cd7ec526a787a0115ff258a72343fbaa0af79ff7386a885761",
+      "blockNumber": "51934186",
+      "confirmedAt": "2026-08-08T10:55:58.029Z"
+    }
+  ],
+  "updatedAt": "2026-08-08T10:56:00.575Z",
+  "finalState": {
+    "oldProject": {
+      "id": "6",
+      "state": "Round1Failed",
+      "round1MON": "0"
+    },
+    "replacementProject": {
+      "id": "7",
+      "state": "Round1Funding",
+      "targetMON": "30",
+      "round1MON": "0",
+      "round1DeadlineUnix": "1786370400",
+      "round1DeadlineUtc": "2026-08-10T14:00:00.000Z",
+      "round1DeadlineAsiaShanghai": "2026-08-10T22:00:00+08:00"
+    },
+    "initiators": [
+      {
+        "address": "0xf47832CcB066b7918BeD97ccCEd9a7F653b078Be",
+        "totalR": "10.2",
+        "availableR": "0.2",
+        "projectStakeR": "10"
+      },
+      {
+        "address": "0x0bd0254C5B924492b9E8a7E6F76164FD3923002E",
+        "totalR": "10.2",
+        "availableR": "0.2",
+        "projectStakeR": "10"
+      },
+      {
+        "address": "0x63B97848b4109bc490D24120F29Ab09e24C946e0",
+        "totalR": "10.2",
+        "availableR": "0.2",
+        "projectStakeR": "10"
+      }
+    ]
+  }
+}
