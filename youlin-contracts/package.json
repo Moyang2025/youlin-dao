@@ -18,6 +18,7 @@
     "demo:video:lifecycle": "tsx scripts/run-video-demo-lifecycle.ts",
     "demo:video:history": "tsx scripts/export-video-history.ts",
     "demo:video:rollover-b": "tsx scripts/rollover-video-project-b.ts",
+    "demo:video:donate-b": "tsx scripts/donate-live-project-b.ts",
     "record:monad": "tsx scripts/record-deployment.ts",
     "check:monad": "tsx scripts/check-deployment.ts",
     "check:demo": "tsx scripts/check-demo.ts",

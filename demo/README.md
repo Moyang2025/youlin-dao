@@ -18,5 +18,6 @@
 - 实时问答 Project B `#7`：同名项目，由原三位账户重新锁定 30 R，状态 `Round1Funding`，第一轮截止北京时间 `2026-08-10 22:00`；
 - Project #7 激活交易：`0xd6bd033d19df49cd7ec526a787a0115ff258a72343fbaa0af79ff7386a885761`；
 - `demo-live-project-b.json` 保存 #6 结束与 #7 重建的 6 笔交易证明。
+- 三个独立演示账户已分别向 Project #7 捐赠 1 MON，第一轮进度为 `3 / 15 MON`，三者均获得项目 P；`demo-live-project-b-donations.json` 保存补款及捐款证明。
 
 演示项目、材料和 MON 均为 Monad Testnet 测试用途，不代表现实公益项目已经实施。
