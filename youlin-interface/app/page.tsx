@@ -1033,7 +1033,9 @@ function ProjectsView({
                   </div>
                   <div>
                     <strong>
-                      共同发起 {acceptedInitiators.length}/{project.initiators.length}
+                      {project.isLegacy
+                        ? `共同发起 ${acceptedInitiators.length}/${project.initiators.length}`
+                        : `公开质押 ${acceptedInitiators.length} 人`}
                     </strong>
                     <small>合计质押 {displayEther(totalInitiatorStake, 2)} R</small>
                   </div>
@@ -1812,12 +1814,18 @@ function InitiatorTrustPanel({
         <span className="live-chain-label"><i /> 链上实时数据</span>
       </div>
       <p className="initiator-disclaimer">
-        “当前总 R”会随账户后续活动变化；“本项目质押 R”是该发起人为本项目锁定的责任额度。
+        {project.isLegacy
+          ? "该项目由历史邀请制协议创建；“当前总 R”会随账户后续活动变化。"
+          : "该项目采用开放共同发起：任何账户都可自主质押 R；“本项目质押 R”是其锁定的责任额度。"}
       </p>
       <div className="initiator-overview-metrics">
         <div>
           <span>正式共同发起</span>
-          <strong>{acceptedInitiators.length}/{project.initiators.length}</strong>
+          <strong>
+            {project.isLegacy
+              ? `${acceptedInitiators.length}/${project.initiators.length}`
+              : `${acceptedInitiators.length} 人`}
+          </strong>
         </div>
         <div>
           <span>本项目合计质押</span>
@@ -1842,14 +1850,24 @@ function InitiatorTrustPanel({
           <div className="initiator-loading">正在从 Monad Testnet 恢复全部发起人 R 与 P 履历…</div>
         )}
         {!profilesQuery.isLoading && profiles.length === 0 && !profilesQuery.isError && (
-          <div className="initiator-loading">该项目没有登记共同发起人。</div>
+          <div className="initiator-loading">
+            {project.isLegacy
+              ? "该项目没有登记共同发起人。"
+              : "尚无人质押。任何拥有可用 R 的账户都可以成为共同发起人。"}
+          </div>
         )}
         {profilesQuery.isError && project.initiators.map((initiator) => (
           <div className="initiator-fallback-row" key={initiator.account}>
             <span>{initiator.account.slice(2, 4).toUpperCase()}</span>
             <div>
               <strong>{shortAddress(initiator.account)}</strong>
-              <small>{initiator.accepted ? "已确认共同发起" : "邀请待确认"}</small>
+              <small>
+                {initiator.accepted
+                  ? "已质押共同发起"
+                  : project.isLegacy
+                    ? "邀请待确认"
+                    : "待确认"}
+              </small>
             </div>
             <b>{displayEther(initiator.stake, 2)} R 质押</b>
           </div>
@@ -1879,7 +1897,7 @@ function InitiatorTrustPanel({
                 </span>
                 <span className="initiator-role">
                   {initiator.account.toLowerCase() === project.creator.toLowerCase() && <em>创建人</em>}
-                  <em>{initiator.accepted ? "已确认" : "待确认"}</em>
+                  <em>{initiator.accepted ? "已质押" : "待确认"}</em>
                 </span>
                 <span className="initiator-number">
                   <small>当前总 R</small>
@@ -2069,6 +2087,14 @@ function ProjectActions({
       </div>
       {project.state === 0 && (
         <>
+          <div className="rule-box">
+            <strong>{project.isLegacy ? "历史邀请制草案" : "开放共同发起"}</strong>
+            <p>
+              {project.isLegacy
+                ? "该草案在旧协议中创建，只有预先登记的受邀钱包能够质押。"
+                : "无需邀请。任何拥有可用 R 的账户都可以自主质押，达到人数与总 R 门槛后即可激活。"}
+            </p>
+          </div>
           <label className="amount-field">
             <span>我的发起质押</span>
             <div><input value={stake} onChange={(event) => setStake(event.target.value)} /><strong>R</strong></div>
@@ -2077,8 +2103,8 @@ function ProjectActions({
             <AppButton disabled={pending} onClick={() => void run({
               functionName: "acceptInitiation",
               args: [id, parseEther(stake)],
-              label: "确认共同发起"
-            }, false)}>确认并锁定 R</AppButton>
+              label: project.isLegacy ? "确认共同发起" : "公开质押共同发起"
+            }, false)}>{project.isLegacy ? "确认并锁定 R" : "质押 R 成为共同发起人"}</AppButton>
             {action("activateProject", "尝试激活项目")}
             {action("cancelExpiredDraft", "截止后取消草案")}
           </div>
@@ -2402,20 +2428,13 @@ function CreateProjectForm({
   const [target, setTarget] = useState("6");
   const [deadlineMinutes, setDeadlineMinutes] = useState("30");
   const [durationMinutes, setDurationMinutes] = useState("20");
-  const [initiators, setInitiators] = useState(address ?? "");
   const [uri, setUri] = useState("");
   const [hash, setHash] = useState<Hex>(zeroHash);
-  const invited = initiators
-    .split(/[\s,，]+/)
-    .map((value) => value.trim())
-    .filter(Boolean);
   const valid =
     isAddress(projectWallet) &&
     Number(target) > 0 &&
     Number(deadlineMinutes) > 0 &&
     Number(durationMinutes) > 0 &&
-    invited.length >= 3 &&
-    invited.every((value) => isAddress(value)) &&
     uri.length > 0 &&
     isHex(hash, { strict: true }) &&
     hash.length === 66;
@@ -2445,14 +2464,10 @@ function CreateProjectForm({
           <input value={durationMinutes} onChange={(event) => setDurationMinutes(event.target.value)} />
         </label>
       </div>
-      <label className="text-field">
-        <span>共同发起钱包（逗号或换行分隔，须包含创建者）</span>
-        <textarea value={initiators} onChange={(event) => setInitiators(event.target.value)} placeholder="0x…, 0x…, 0x…" />
-      </label>
       <EvidenceFields uri={uri} setUri={setUri} hash={hash} setHash={setHash} />
       <div className="rule-box">
-        <strong>创建只登记草案</strong>
-        <p>每位受邀人仍需分别调用 acceptInitiation 锁定自己的 R；人数和总质押同时达标后才能激活。</p>
+        <strong>项目草案公开进入项目广场</strong>
+        <p>无需预填共同发起钱包。任何拥有可用 R 的账户都可自主质押；共同发起人数与总质押同时达标后即可激活。</p>
       </div>
       <AppButton
         disabled={pending || !valid}
@@ -2464,7 +2479,6 @@ function CreateProjectForm({
               parseEther(target),
               BigInt(Math.floor(Date.now() / 1000) + Number(deadlineMinutes) * 60),
               BigInt(Number(durationMinutes) * 60),
-              invited as Address[],
               uri,
               hash
             ],
@@ -2474,7 +2488,7 @@ function CreateProjectForm({
       >
         创建链上项目草案
       </AppButton>
-      {!valid && <div className="modal-note">请填写有效钱包、至少 3 位发起人、材料 URI 与 32 字节内容哈希。</div>}
+      {!valid && <div className="modal-note">请填写有效收款钱包、项目参数、材料 URI 与 32 字节内容哈希。</div>}
     </div>
   );
 }

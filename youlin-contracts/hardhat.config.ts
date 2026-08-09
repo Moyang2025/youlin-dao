@@ -50,7 +50,7 @@ export default defineConfig({
     },
     etherscan: {
       enabled: true,
-      apiKey: etherscanApiKey,
+      apiKey: etherscanApiKey || "unused",
     },
     sourcify: {
       enabled: true,

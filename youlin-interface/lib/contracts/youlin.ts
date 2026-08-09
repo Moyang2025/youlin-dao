@@ -28,6 +28,7 @@ export const genesisTreasuryAbi = genesisArtifact as Abi;
 export const profileRegistryAbi = profileRegistryArtifact as Abi;
 
 export const protocolAddress = youlinDeployment.protocol as Address;
+export const legacyProtocolAddress = youlinDeployment.legacyProtocol as Address;
 export const reputationAddress = youlinDeployment.reputation as Address;
 export const participationAddress = youlinDeployment.participation as Address;
 export const genesisTreasuryAddress =
@@ -152,6 +153,8 @@ export type ProjectMetadata = {
 
 export type ChainProject = {
   id: bigint;
+  protocolAddress: Address;
+  isLegacy: boolean;
   creator: Address;
   projectWallet: Address;
   state: number;
@@ -265,44 +268,57 @@ export function useYoulinProjects() {
   const publicClient = usePublicClient({ chainId: youlinDeployment.chainId });
 
   return useQuery({
-    queryKey: ["youlin", "projects", protocolAddress],
+    queryKey: ["youlin", "projects", protocolAddress, legacyProtocolAddress],
     enabled: isYoulinDeployed && Boolean(publicClient),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!publicClient) return [] as ChainProject[];
-      const count = (await publicClient.readContract({
+      const openCount = (await publicClient.readContract({
         address: protocolAddress,
         abi: protocolAbi,
         functionName: "projectCount"
       })) as bigint;
-
-      const ids = Array.from({ length: Number(count) }, (_, index) =>
-        BigInt(index + 1)
+      const legacyIds = Array.from(
+        { length: youlinDeployment.legacyProjectCount },
+        (_, index) => BigInt(index + 1)
       );
+      const openIds = Array.from(
+        {
+          length: Math.max(
+            0,
+            Number(openCount) - youlinDeployment.firstOpenProjectId + 1
+          )
+        },
+        (_, index) => BigInt(youlinDeployment.firstOpenProjectId + index)
+      );
+      const sources = [
+        ...legacyIds.map((id) => ({ id, address: legacyProtocolAddress, isLegacy: true })),
+        ...openIds.map((id) => ({ id, address: protocolAddress, isLegacy: false }))
+      ];
       const views = await publicClient.multicall({
         allowFailure: false,
-        contracts: ids.flatMap((id) => [
+        contracts: sources.flatMap(({ id, address }) => [
           {
-            address: protocolAddress,
+            address,
             abi: protocolAbi,
             functionName: "getProjectCore",
             args: [id]
           },
           {
-            address: protocolAddress,
+            address,
             abi: protocolAbi,
             functionName: "getProjectTimes",
             args: [id]
           },
           {
-            address: protocolAddress,
+            address,
             abi: protocolAbi,
             functionName: "getProjectContent",
             args: [id]
           },
           {
-            address: protocolAddress,
+            address,
             abi: protocolAbi,
             functionName: "getInitiators",
             args: [id]
@@ -310,7 +326,7 @@ export function useYoulinProjects() {
         ])
       });
       const projects = await Promise.all(
-        ids.map(async (id, index) => {
+        sources.map(async ({ id, address, isLegacy }, index) => {
           const core = views[index * 4] as ProjectCoreTuple;
           const times = views[index * 4 + 1] as ProjectTimesTuple;
           const content = views[index * 4 + 2] as ProjectContentTuple;
@@ -318,6 +334,8 @@ export function useYoulinProjects() {
           const metadata = await fetchMetadata(content[0]);
           return {
             id,
+            protocolAddress: address,
+            isLegacy,
             creator: core[0],
             projectWallet: core[1],
             state: Number(core[2]),
@@ -361,7 +379,7 @@ export function useYoulinInitiatorProfiles(project?: ChainProject) {
     queryKey: [
       "youlin",
       "project-initiators",
-      protocolAddress,
+      project?.protocolAddress,
       project?.id.toString(),
       initiatorKey
     ],
@@ -375,7 +393,7 @@ export function useYoulinInitiatorProfiles(project?: ChainProject) {
     queryFn: async () => {
       if (!publicClient || !project) return [] as InitiatorChainProfile[];
 
-      const [genesisProjectId, projectCount] = (await Promise.all([
+      const [genesisProjectId, openProjectCount] = (await Promise.all([
         publicClient.readContract({
           address: genesisTreasuryAddress,
           abi: genesisTreasuryAbi,
@@ -415,16 +433,28 @@ export function useYoulinInitiatorProfiles(project?: ChainProject) {
             args: [account]
           },
           {
+            address: legacyProtocolAddress,
+            abi: protocolAbi,
+            functionName: "getParticipatedProjects",
+            args: [account, 0n, BigInt(youlinDeployment.legacyProjectCount)]
+          },
+          {
+            address: legacyProtocolAddress,
+            abi: protocolAbi,
+            functionName: "getInitiatedProjects",
+            args: [account, 0n, BigInt(youlinDeployment.legacyProjectCount)]
+          },
+          {
             address: protocolAddress,
             abi: protocolAbi,
             functionName: "getParticipatedProjects",
-            args: [account, 0n, projectCount]
+            args: [account, 0n, openProjectCount]
           },
           {
             address: protocolAddress,
             abi: protocolAbi,
             functionName: "getInitiatedProjects",
-            args: [account, 0n, projectCount]
+            args: [account, 0n, openProjectCount]
           },
           {
             address: participationAddress,
@@ -436,7 +466,7 @@ export function useYoulinInitiatorProfiles(project?: ChainProject) {
       });
 
       return project.initiators.map((initiator, index) => {
-        const offset = index * 7;
+        const offset = index * 9;
         const accountProfile = rows[offset] as readonly [
           string,
           string,
@@ -456,9 +486,15 @@ export function useYoulinInitiatorProfiles(project?: ChainProject) {
           total: rows[offset + 1] as bigint,
           locked: rows[offset + 2] as bigint,
           available: rows[offset + 3] as bigint,
-          participated: [...(rows[offset + 4] as readonly bigint[])],
-          initiated: [...(rows[offset + 5] as readonly bigint[])],
-          hasGenesisCredential: rows[offset + 6] as boolean
+          participated: [
+            ...(rows[offset + 4] as readonly bigint[]),
+            ...(rows[offset + 6] as readonly bigint[])
+          ],
+          initiated: [
+            ...(rows[offset + 5] as readonly bigint[]),
+            ...(rows[offset + 7] as readonly bigint[])
+          ],
+          hasGenesisCredential: rows[offset + 8] as boolean
         } satisfies InitiatorChainProfile;
       });
     }
@@ -484,7 +520,15 @@ export function useYoulinProfile(address?: Address) {
           donations: {} as Record<string, { round1: bigint; round2: bigint }>
         };
       }
-      const [total, locked, available, participated, initiated] =
+      const [
+        total,
+        locked,
+        available,
+        legacyParticipated,
+        legacyInitiated,
+        openParticipated,
+        openInitiated
+      ] =
         (await Promise.all([
           publicClient.readContract({
             address: reputationAddress,
@@ -505,6 +549,18 @@ export function useYoulinProfile(address?: Address) {
             args: [address]
           }),
           publicClient.readContract({
+            address: legacyProtocolAddress,
+            abi: protocolAbi,
+            functionName: "getParticipatedProjects",
+            args: [address, 0n, 100n]
+          }),
+          publicClient.readContract({
+            address: legacyProtocolAddress,
+            abi: protocolAbi,
+            functionName: "getInitiatedProjects",
+            args: [address, 0n, 100n]
+          }),
+          publicClient.readContract({
             address: protocolAddress,
             abi: protocolAbi,
             functionName: "getParticipatedProjects",
@@ -516,18 +572,32 @@ export function useYoulinProfile(address?: Address) {
             functionName: "getInitiatedProjects",
             args: [address, 0n, 100n]
           })
-        ])) as [bigint, bigint, bigint, bigint[], bigint[]];
+        ])) as [
+          bigint,
+          bigint,
+          bigint,
+          bigint[],
+          bigint[],
+          bigint[],
+          bigint[]
+        ];
+      const participated = [...legacyParticipated, ...openParticipated];
+      const initiated = [...legacyInitiated, ...openInitiated];
       const donationRows = await Promise.all(
         participated.map(async (projectId) => {
+          const projectProtocol =
+            projectId <= BigInt(youlinDeployment.legacyProjectCount)
+              ? legacyProtocolAddress
+              : protocolAddress;
           const [round1, round2] = (await Promise.all([
             publicClient.readContract({
-              address: protocolAddress,
+              address: projectProtocol,
               abi: protocolAbi,
               functionName: "round1DonationOf",
               args: [projectId, address]
             }),
             publicClient.readContract({
-              address: protocolAddress,
+              address: projectProtocol,
               abi: protocolAbi,
               functionName: "round2DonationOf",
               args: [projectId, address]
@@ -711,13 +781,19 @@ export function useYoulinTransaction(
 
       try {
         onPhase({ kind: "wallet", label });
+        const isLegacyProtocolCall =
+          contract === "protocol" &&
+          typeof args[0] === "bigint" &&
+          args[0] <= BigInt(youlinDeployment.legacyProjectCount);
         const hash = await mutation.mutateAsync({
           address:
             contract === "genesis"
               ? genesisTreasuryAddress
               : contract === "profile"
                 ? profileRegistryAddress
-                : protocolAddress,
+                : isLegacyProtocolCall
+                  ? legacyProtocolAddress
+                  : protocolAddress,
           abi:
             contract === "genesis"
               ? genesisTreasuryAbi

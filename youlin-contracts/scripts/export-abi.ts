@@ -8,6 +8,7 @@ type Deployment = {
   explorerUrl: string;
   contracts: {
     YoulinProtocol: string;
+    YoulinProtocolLegacy?: string;
     YoulinReputation: string;
     YoulinParticipation: string;
     YoulinGenesisTreasury?: string;
@@ -81,6 +82,11 @@ export const youlinDeployment = {
     deployment?.explorerUrl ?? "https://testnet.monadscan.com",
   )},
   protocol: ${JSON.stringify(addresses.YoulinProtocol)},
+  legacyProtocol: ${JSON.stringify(
+    addresses.YoulinProtocolLegacy ?? addresses.YoulinProtocol,
+  )},
+  legacyProjectCount: 8,
+  firstOpenProjectId: 9,
   reputation: ${JSON.stringify(addresses.YoulinReputation)},
   participation: ${JSON.stringify(addresses.YoulinParticipation)},
   genesisTreasury: ${JSON.stringify(

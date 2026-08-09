@@ -82,7 +82,7 @@ const keysFrom = (value: string | undefined): Hex[] =>
     .map(normalizeKey);
 
 const deploymentDir = path.join(process.cwd(), "deployments");
-const evidencePath = path.join(deploymentDir, "companion-project.json");
+const evidencePath = path.join(deploymentDir, "companion-project-open.json");
 const deployment = JSON.parse(
   await readFile(path.join(deploymentDir, "monad-testnet.json"), "utf8"),
 ) as Deployment;
@@ -186,7 +186,6 @@ try {
 }
 
 const projectId = BigInt(evidence.projectId);
-const invited = [...evidence.virtualInitiators, evidence.userInitiator];
 const persist = async () => {
   evidence.updatedAt = new Date().toISOString();
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
@@ -224,7 +223,6 @@ if (projectCount < projectId) {
       TARGET,
       ROUND1_DEADLINE,
       EXPECTED_DURATION,
-      invited,
       METADATA_URI,
       metadataHash,
     ],
@@ -245,6 +243,15 @@ if (content[0] !== METADATA_URI || content[1].toLowerCase() !== metadataHash.toL
 }
 
 for (const [index, item] of selected.entries()) {
+  if (item.mon < parseEther("1")) {
+    const gasHash = await executor.sendTransaction({
+      account: executor.account,
+      chain,
+      to: item.wallet.account.address,
+      value: parseEther("1") - item.mon,
+    });
+    await record(`为虚拟共同发起人 ${index + 1} 补充交易 gas`, gasHash);
+  }
   const stake = (await publicClient.readContract({
     address: protocol,
     abi: protocolAbi,
@@ -259,6 +266,9 @@ for (const [index, item] of selected.entries()) {
       abi: protocolAbi,
       functionName: "acceptInitiation",
       args: [projectId, VIRTUAL_STAKE],
+      gas: 400_000n,
+      maxFeePerGas: 120_000_000_000n,
+      maxPriorityFeePerGas: 2_000_000_000n,
     });
     await record(`项目 #${projectId}：虚拟共同发起人 ${index + 1} 锁定 5 R`, hash);
   }

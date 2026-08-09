@@ -21,6 +21,7 @@ const YoulinModule = buildModule("YoulinModule", (m) => {
     500_000_000_000_000_000n,
     6_000,
     3,
+    0,
   ]);
 
   const reputationProtocolRole = m.staticCall(

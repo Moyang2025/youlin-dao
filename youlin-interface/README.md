@@ -24,7 +24,8 @@ NEXT_PUBLIC_EXPLORER_URL=https://testnet.monadscan.com
 ## Monad Testnet
 
 ```text
-YoulinProtocol         0x20a1Df8893fD7531A77E225f9727b45959D2ff66
+YoulinProtocol         0x60634746d377ea1d71F78cB22bf8436D34e15B99
+YoulinProtocolLegacy   0x20a1Df8893fD7531A77E225f9727b45959D2ff66
 YoulinReputation       0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3
 YoulinParticipation    0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF
 YoulinGenesisTreasury  0xe4a470a21E272945fcDAAF7625f6D11703183fC6

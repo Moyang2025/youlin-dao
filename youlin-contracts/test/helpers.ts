@@ -52,6 +52,7 @@ export async function deploySystem() {
     parseEther("0.5"),
     6_000,
     3,
+    0n,
   ]);
 
   await reputation.write.grantRole([

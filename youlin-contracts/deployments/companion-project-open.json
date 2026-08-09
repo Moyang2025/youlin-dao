@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "projectId": "9",
+  "name": "为孤独老年人提供陪伴",
+  "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/companion-elderly.json",
+  "metadataHash": "0xbdc8bf01c66dadfb2e8d799d3e6bf936942b85e89a6c8b7eb4b88e5026563a2b",
+  "targetMON": "30",
+  "requestedDeadline": "2026-08-10T22:00:00+08:00",
+  "round1DeadlineUnix": "1786370400",
+  "expectedDurationSeconds": "2592000",
+  "projectWallet": "0x00A206fcCD057360F173D31A2f6090C74f9F456c",
+  "userInitiator": "0xe1599f523fbfd71be9e5f5f4b8d6989983918b8b",
+  "virtualInitiators": [
+    "0x077c889d3F1fCE509765e39388765eBEA0457e60",
+    "0x96EcbE0D0A285f8469844B71b28a001e57B7Ab81"
+  ],
+  "transactions": [
+    {
+      "label": "项目 #9：创建“为孤独老年人提供陪伴”草案",
+      "hash": "0xdc8c5f648ee31a1bfbb10ef7ffd14b87cba4caca9f4df53a5ffe4175fb7a15c8",
+      "blockNumber": "52233755",
+      "confirmedAt": "2026-08-09T12:19:27.371Z"
+    },
+    {
+      "label": "为虚拟共同发起人 1 补充交易 gas",
+      "hash": "0x8d895733f257da80637d193764e443cfdcc2e5a89f6a4bb070ad4254d2bb1ca4",
+      "blockNumber": "52234043",
+      "confirmedAt": "2026-08-09T12:20:56.360Z"
+    },
+    {
+      "label": "为虚拟共同发起人 1 补充交易 gas",
+      "hash": "0x94927d40aaf34e7a8addef7c5401cfae6882f01c1e00203dd3fd1b90d576618a",
+      "blockNumber": "52235685",
+      "confirmedAt": "2026-08-09T12:29:17.563Z"
+    },
+    {
+      "label": "项目 #9：虚拟共同发起人 1 锁定 5 R",
+      "hash": "0xc6b94e1ea232b5fe3e576cdb5bc092ffdc61bef2861aeb1efad757d67b5a4e69",
+      "blockNumber": "52236044",
+      "confirmedAt": "2026-08-09T12:31:06.805Z"
+    },
+    {
+      "label": "为虚拟共同发起人 2 补充交易 gas",
+      "hash": "0x4631a1ea9cfadd94832ba318100e629ceffd20e92cd2f5bf8ea2936c1aa892f9",
+      "blockNumber": "52236050",
+      "confirmedAt": "2026-08-09T12:31:09.969Z"
+    },
+    {
+      "label": "项目 #9：虚拟共同发起人 2 锁定 5 R",
+      "hash": "0x7238fa154f4a45a39adb7c27a1a49261b67c723e71f4b14729b626f5b531a009",
+      "blockNumber": "52236062",
+      "confirmedAt": "2026-08-09T12:31:12.794Z"
+    }
+  ],
+  "updatedAt": "2026-08-09T12:31:14.431Z",
+  "finalState": {
+    "state": "Draft",
+    "acceptedInitiators": "2",
+    "requiredInitiators": "3",
+    "totalStakedR": "10",
+    "requiredTotalStakeR": "30",
+    "userStakeR": "0",
+    "userRequiredStakeR": "20",
+    "userAvailableR": "98",
+    "round1DeadlineUnix": "1786370400",
+    "round1DeadlineAsiaShanghai": "2026-08-10T22:00:00+08:00",
+    "explorerProjectContract": "https://testnet.monadscan.com/address/0x60634746d377ea1d71F78cB22bf8436D34e15B99"
+  }
+}

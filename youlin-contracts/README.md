@@ -4,7 +4,7 @@ Solidity 0.8.28 / EVM Prague / Hardhat 3 项目，包含：
 
 - `YoulinReputation`：不可转让的统一声誉 R，支持协议铸造、锁定、消耗和重新分配；
 - `YoulinParticipation`：不可转让、每地址每项目至多一枚的参与凭证 P；
-- `YoulinProtocol`：共同发起与 R 质押、两轮募捐、中期/结项对数加权评分、挑战、争议投票和结算；
+- `YoulinProtocol`：开放共同发起与 R 质押、两轮募捐、中期/结项对数加权评分、挑战、争议投票和结算；项目草案公开进入广场，不维护受邀钱包名单；
 - `YoulinGenesisTreasury`：新用户创世捐款入口与不可绕过投票的社区金库。
 - `YoulinProfileRegistry`：每个钱包自行维护公开的链上昵称、头像 URI 与自我描述；无管理员代改入口。
 

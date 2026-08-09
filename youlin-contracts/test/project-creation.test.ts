@@ -32,6 +32,7 @@ describe("YoulinProtocol project creation", async function () {
       parseEther("0.5"),
       6_000,
       3,
+      0n,
     ]);
 
     const reputationRole = await reputation.read.PROTOCOL_ROLE();
@@ -43,8 +44,14 @@ describe("YoulinProtocol project creation", async function () {
         initiator1.account.address,
         initiator2.account.address,
         initiator3.account.address,
+        outsider.account.address,
       ],
-      [parseEther("20"), parseEther("20"), parseEther("20")],
+      [
+        parseEther("20"),
+        parseEther("20"),
+        parseEther("20"),
+        parseEther("20"),
+      ],
     ]);
 
     return {
@@ -71,11 +78,6 @@ describe("YoulinProtocol project creation", async function () {
         parseEther("30"),
         deadline,
         600n,
-        [
-          fixture.initiator1.account.address,
-          fixture.initiator2.account.address,
-          fixture.initiator3.account.address,
-        ],
         "ipfs://youlin/project-1.json",
         keccak256(toBytes("project-1")),
       ],
@@ -100,68 +102,32 @@ describe("YoulinProtocol project creation", async function () {
     );
   });
 
-  it("requires valid unique invitations including the creator", async function () {
+  it("publishes an empty open draft that any R holder may join", async function () {
     const fixture = await deployFixture();
     const block = await publicClient.getBlock();
-    const commonArgs = [
-      fixture.projectWallet.account.address,
-      parseEther("30"),
-      block.timestamp + 3_600n,
-      600n,
-    ] as const;
-
-    await viem.assertions.revertWithCustomError(
-      fixture.protocol.write.createProjectDraft(
-        [
-          ...commonArgs,
-          [
-            fixture.initiator1.account.address,
-            fixture.initiator2.account.address,
-          ],
-          "ipfs://youlin/project.json",
-          keccak256(toBytes("project")),
-        ],
-        { account: fixture.initiator1.account },
-      ),
-      fixture.protocol,
-      "InvalidInitiatorCount",
+    await fixture.protocol.write.createProjectDraft(
+      [
+        fixture.projectWallet.account.address,
+        parseEther("30"),
+        block.timestamp + 3_600n,
+        600n,
+        "ipfs://youlin/project.json",
+        keccak256(toBytes("project")),
+      ],
+      { account: fixture.initiator1.account },
     );
 
-    await viem.assertions.revertWithCustomError(
-      fixture.protocol.write.createProjectDraft(
-        [
-          ...commonArgs,
-          [
-            fixture.initiator1.account.address,
-            fixture.initiator2.account.address,
-            fixture.initiator2.account.address,
-          ],
-          "ipfs://youlin/project.json",
-          keccak256(toBytes("project")),
-        ],
-        { account: fixture.initiator1.account },
-      ),
-      fixture.protocol,
-      "DuplicateInitiator",
+    assert.deepEqual(await fixture.protocol.read.getInitiators([1n]), [[], [], []]);
+    await fixture.protocol.write.acceptInitiation([1n, parseEther("5")], {
+      account: fixture.outsider.account,
+    });
+    const initiators = await fixture.protocol.read.getInitiators([1n]);
+    assert.equal(
+      initiators[0][0].toLowerCase(),
+      fixture.outsider.account.address.toLowerCase(),
     );
-
-    await viem.assertions.revertWithCustomError(
-      fixture.protocol.write.createProjectDraft(
-        [
-          ...commonArgs,
-          [
-            fixture.initiator2.account.address,
-            fixture.initiator3.account.address,
-            fixture.outsider.account.address,
-          ],
-          "ipfs://youlin/project.json",
-          keccak256(toBytes("project")),
-        ],
-        { account: fixture.initiator1.account },
-      ),
-      fixture.protocol,
-      "CreatorMustBeInvited",
-    );
+    assert.deepEqual(initiators[1], [true]);
+    assert.deepEqual(initiators[2], [parseEther("5")]);
   });
 
   it("locks each initiator's own R and activates only after both thresholds", async function () {

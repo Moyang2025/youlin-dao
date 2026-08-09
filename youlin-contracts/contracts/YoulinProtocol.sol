@@ -31,6 +31,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
     uint256 public immutable minJurorStake;
     uint16 public immutable challengePassBps;
     uint16 public immutable minDisputeVoters;
+    uint256 public immutable firstProjectId;
 
     struct Project {
         address creator;
@@ -65,8 +66,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
 
     uint256 public projectCount;
     mapping(uint256 projectId => Project project) private projects;
-    mapping(uint256 projectId => address[] accounts) private invitedInitiatorsByProject;
-    mapping(uint256 projectId => mapping(address account => bool invited)) public invitedInitiator;
+    mapping(uint256 projectId => address[] accounts) private initiatorsByProject;
     mapping(uint256 projectId => mapping(address account => bool accepted)) public isInitiator;
     mapping(uint256 projectId => mapping(address account => uint256 amount)) public initiatorStake;
     mapping(uint256 projectId => uint256 amount) public totalInitiatorStake;
@@ -137,12 +137,8 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
     error DeadlineNotInFuture();
     error DeadlinePassed();
     error ExpectedDurationTooShort(uint256 minimum, uint256 supplied);
-    error InvalidInitiatorCount(uint256 minimum, uint256 maximum, uint256 supplied);
-    error DuplicateInitiator(address account);
-    error CreatorMustBeInvited();
     error EmptyURI();
     error EmptyHash();
-    error NotInvited();
     error AlreadyAccepted();
     error InitiatorCountNotMet(uint256 required, uint256 actual);
     error InitiatorStakeNotMet(uint256 required, uint256 actual);
@@ -288,7 +284,8 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         uint256 minChallengeStake_,
         uint256 minJurorStake_,
         uint16 challengePassBps_,
-        uint16 minDisputeVoters_
+        uint16 minDisputeVoters_,
+        uint256 previousProjectCount_
     ) {
         if (
             admin == address(0) ||
@@ -318,6 +315,8 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         minJurorStake = minJurorStake_;
         challengePassBps = challengePassBps_;
         minDisputeVoters = minDisputeVoters_;
+        projectCount = previousProjectCount_;
+        firstProjectId = previousProjectCount_ + 1;
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
@@ -344,10 +343,48 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         uint128 targetAmount,
         uint64 round1Deadline,
         uint64 expectedDuration,
-        address[] calldata invitedInitiators,
         string calldata metadataURI,
         bytes32 metadataHash
     ) external whenNotPaused returns (uint256 projectId) {
+        return _createProjectDraft(
+            projectWallet,
+            targetAmount,
+            round1Deadline,
+            expectedDuration,
+            metadataURI,
+            metadataHash
+        );
+    }
+
+    /// @dev Backwards-compatible selector for legacy scripts. The address list is
+    /// intentionally ignored: initiation is public and never invitation-gated.
+    function createProjectDraft(
+        address payable projectWallet,
+        uint128 targetAmount,
+        uint64 round1Deadline,
+        uint64 expectedDuration,
+        address[] calldata,
+        string calldata metadataURI,
+        bytes32 metadataHash
+    ) external whenNotPaused returns (uint256 projectId) {
+        return _createProjectDraft(
+            projectWallet,
+            targetAmount,
+            round1Deadline,
+            expectedDuration,
+            metadataURI,
+            metadataHash
+        );
+    }
+
+    function _createProjectDraft(
+        address payable projectWallet,
+        uint128 targetAmount,
+        uint64 round1Deadline,
+        uint64 expectedDuration,
+        string calldata metadataURI,
+        bytes32 metadataHash
+    ) private returns (uint256 projectId) {
         if (projectWallet == address(0)) revert ZeroAddress();
         if (targetAmount == 0) revert ZeroAmount();
         if (round1Deadline <= block.timestamp) revert DeadlineNotInFuture();
@@ -357,24 +394,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         if (bytes(metadataURI).length == 0) revert EmptyURI();
         if (metadataHash == bytes32(0)) revert EmptyHash();
 
-        (uint256 minimum, uint256 maximum) = initiatorBounds(targetAmount);
-        uint256 supplied = invitedInitiators.length;
-        if (supplied < minimum || supplied > maximum) {
-            revert InvalidInitiatorCount(minimum, maximum, supplied);
-        }
-
         projectId = ++projectCount;
-        bool creatorInvited;
-        for (uint256 i; i < supplied; ++i) {
-            address account = invitedInitiators[i];
-            if (account == address(0)) revert ZeroAddress();
-            if (invitedInitiator[projectId][account]) revert DuplicateInitiator(account);
-            invitedInitiator[projectId][account] = true;
-            invitedInitiatorsByProject[projectId].push(account);
-            if (account == msg.sender) creatorInvited = true;
-        }
-        if (!creatorInvited) revert CreatorMustBeInvited();
-
         Project storage project = projects[projectId];
         project.creator = msg.sender;
         project.projectWallet = projectWallet;
@@ -396,13 +416,13 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         if (project.state != YoulinTypes.ProjectState.Draft) {
             revert InvalidProjectState(project.state);
         }
-        if (!invitedInitiator[projectId][msg.sender]) revert NotInvited();
         if (isInitiator[projectId][msg.sender]) revert AlreadyAccepted();
         if (stakeAmount == 0) revert ZeroAmount();
 
         reputation.lockByProtocol(msg.sender, stakeAmount, projectId);
         isInitiator[projectId][msg.sender] = true;
         initiatorStake[projectId][msg.sender] = stakeAmount;
+        initiatorsByProject[projectId].push(msg.sender);
         totalInitiatorStake[projectId] += stakeAmount;
         acceptedInitiatorCount[projectId] += 1;
         _indexInitiatedProject(msg.sender, projectId);
@@ -1210,7 +1230,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         projectExists(projectId)
         returns (address[] memory accounts, bool[] memory accepted, uint256[] memory stakes)
     {
-        accounts = invitedInitiatorsByProject[projectId];
+        accounts = initiatorsByProject[projectId];
         uint256 length = accounts.length;
         accepted = new bool[](length);
         stakes = new uint256[](length);
@@ -1262,7 +1282,9 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
     }
 
     modifier projectExists(uint256 projectId) {
-        if (projectId == 0 || projectId > projectCount) revert ProjectNotFound(projectId);
+        if (projectId < firstProjectId || projectId > projectCount) {
+            revert ProjectNotFound(projectId);
+        }
         _;
     }
 
@@ -1292,7 +1314,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
     function _unlockAllInitiatorStakes(
         uint256 projectId
     ) private returns (uint256 unlocked) {
-        address[] storage accounts = invitedInitiatorsByProject[projectId];
+        address[] storage accounts = initiatorsByProject[projectId];
         for (uint256 i; i < accounts.length; ++i) {
             uint256 stake = initiatorStake[projectId][accounts[i]];
             if (stake != 0) {
@@ -1305,7 +1327,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
     function _settleLowScore(uint256 projectId) private {
         Project storage project = projects[projectId];
         uint256 burned;
-        address[] storage accounts = invitedInitiatorsByProject[projectId];
+        address[] storage accounts = initiatorsByProject[projectId];
         for (uint256 i; i < accounts.length; ++i) {
             uint256 stake = initiatorStake[projectId][accounts[i]];
             if (stake != 0) {
@@ -1323,7 +1345,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
         uint256 returned;
         uint256 burned;
         uint256 minted;
-        address[] storage accounts = invitedInitiatorsByProject[projectId];
+        address[] storage accounts = initiatorsByProject[projectId];
         for (uint256 i; i < accounts.length; ++i) {
             address account = accounts[i];
             uint256 stake = initiatorStake[projectId][account];
@@ -1366,7 +1388,7 @@ contract YoulinProtocol is AccessControl, Pausable, ReentrancyGuard {
 
     function _settleSuccessfulChallenge(uint256 projectId) private {
         Project storage project = projects[projectId];
-        address[] storage initiators = invitedInitiatorsByProject[projectId];
+        address[] storage initiators = initiatorsByProject[projectId];
         uint256 rewardPool;
         for (uint256 i; i < initiators.length; ++i) {
             uint256 stake = initiatorStake[projectId][initiators[i]];

@@ -1,6 +1,7 @@
 # 部署与演示记录
 
-- `monad-testnet.json`：五份合约地址、部署/授权交易、Sourcify 验证链接与冻结配置；
+- `monad-testnet.json`：当前开放质押协议、历史协议及 R/P/创世金库/资料合约的地址、部署授权交易与 Sourcify 验证链接；
+- `companion-project-open.json`：开放质押项目 #9 的创建、gas 补充、两笔真实质押交易和最终状态；
 - `demo-projects.json`：四个由真实交易创建的协议项目和完整生命周期交易；
 - `genesis-demo.json`：三名真实捐赠者、创世提案、三票赞成、结算与执行交易；
 - `profile-demo.json`：部署账户写入公开昵称、头像 URI 与自我描述的真实交易；

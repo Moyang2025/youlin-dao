@@ -12,7 +12,8 @@
     "disputeVotingDurationSeconds": 180
   },
   "contracts": {
-    "YoulinProtocol": "0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
+    "YoulinProtocol": "0x60634746d377ea1d71F78cB22bf8436D34e15B99",
+    "YoulinProtocolLegacy": "0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
     "YoulinReputation": "0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3",
     "YoulinParticipation": "0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF",
     "YoulinGenesisTreasury": "0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
@@ -25,6 +26,15 @@
     "bioMaxBytes": 512,
     "adminCanEditProfiles": false,
     "nicknameUnique": false
+  },
+  "protocolUpgrade": {
+    "deployedAt": "2026-08-09T12:05:27.931Z",
+    "mode": "open-reputation-staking",
+    "firstProjectId": 9,
+    "legacyProjectCount": 8,
+    "invitationRequired": false,
+    "activationRequiresMinimumInitiators": true,
+    "activationRequiresTotalStakeAtLeastTarget": true
   },
   "genesisTreasury": {
     "deployedAt": "2026-07-31T09:56:09.000Z",
@@ -40,7 +50,8 @@
     "adminWithdrawal": false
   },
   "verification": {
-    "YoulinProtocol": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
+    "YoulinProtocol": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0x60634746d377ea1d71F78cB22bf8436D34e15B99",
+    "YoulinProtocolLegacy": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0x20a1Df8893fD7531A77E225f9727b45959D2ff66",
     "YoulinReputation": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0x3f3C0f177C4076aCb9be40198d9Ff93a74D5a3c3",
     "YoulinParticipation": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0xa8B7b596b9ebcA4Eb8BF6d9f95Ef68DcEB758CeF",
     "YoulinGenesisTreasury": "https://sourcify-api-monad.blockvision.org/repo-ui/10143/0xe4a470a21E272945fcDAAF7625f6D11703183fC6",
@@ -49,9 +60,12 @@
   "transactions": {
     "deployYoulinParticipation": "0x0bd429dc8c939096ccf18d8f95a2fdcf8e9e2d698cc9f69368f69a83bfafc36e",
     "deployYoulinReputation": "0x8a900a6ab3c1d9f9aaa742748b82868ad3a6f48b191700473886182162d302ae",
-    "deployYoulinProtocol": "0x34c6266a37407f347a1892405f91a8e55fc4ab4ad240bdf2a0745ea35463a190",
+    "deployYoulinProtocol": "0xa04c26b3e5f8aae918050f17d87214a01d25138bc3b5b58116bef2c559719bff",
+    "deployYoulinProtocolLegacy": "0x34c6266a37407f347a1892405f91a8e55fc4ab4ad240bdf2a0745ea35463a190",
     "grantParticipationProtocolRole": "0x99545db783b9de41048c34e9064cdb5e1e44aa6b0da978bcf3e513990ac4576e",
     "grantReputationProtocolRole": "0xc48797bbd9118911abecbb851a9ea199bdb624f58dc08cc63d0f3369c80f81c9",
+    "grantOpenProtocolParticipationRole": "0x329af6edbcb5eb5b6d0631f6939efdb332c4f0d29a060e3bc6abe6a1046cef2f",
+    "grantOpenProtocolReputationRole": "0x04b103c7226b6941f1394000fc7b0e7289f400742aca49c3c122ba762c19a89f",
     "deployYoulinGenesisTreasury": "0x429c4a332568c9e06ab791c049afd2fca0eb749570a63258dbeae8dce6c775a0",
     "grantGenesisParticipationProtocolRole": "0xae60ce192d6c340de7d2b51a482ace2f405c3d59859d702ecf688664abaadeb1",
     "grantGenesisReputationProtocolRole": "0x7e8b2d62a85b625548229d81504df249735edbc9e90c2e599ef8f470701e81a4",

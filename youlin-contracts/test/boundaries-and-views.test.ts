@@ -34,6 +34,7 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
         parseEther("0.5"),
         6_000,
         3,
+        0n,
       ]),
     );
     await assert.rejects(
@@ -50,6 +51,7 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
         parseEther("0.5"),
         6_000,
         3,
+        0n,
       ]),
     );
     await viem.assertions.revertWithCustomError(
@@ -138,20 +140,6 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
         error,
       );
     }
-    await viem.assertions.revertWithCustomError(
-      system.protocol.write.createProjectDraft(
-        [
-          ...valid.slice(0, 4),
-          [system.initiator1.account.address, system.initiator2.account.address, zeroAddress],
-          valid[5],
-          valid[6],
-        ],
-        { account: system.initiator1.account },
-      ),
-      system.protocol,
-      "ZeroAddress",
-    );
-
     await system.protocol.write.createProjectDraft(valid, {
       account: system.initiator1.account,
     });
@@ -160,13 +148,9 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
       system.protocol,
       "SubmissionWindowOpen",
     );
-    await viem.assertions.revertWithCustomError(
-      system.protocol.write.acceptInitiation([1n, parseEther("1")], {
-        account: system.donor1.account,
-      }),
-      system.protocol,
-      "NotInvited",
-    );
+    await system.protocol.write.acceptInitiation([1n, parseEther("1")], {
+      account: system.donor1.account,
+    });
     await viem.assertions.revertWithCustomError(
       system.protocol.write.acceptInitiation([1n, 0n], {
         account: system.initiator1.account,
@@ -187,7 +171,7 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
     await system.protocol.write.acceptInitiation([1n, parseEther("2")], {
       account: system.initiator2.account,
     });
-    await system.protocol.write.acceptInitiation([1n, parseEther("1")], {
+    await system.protocol.write.acceptInitiation([1n, parseEther("0.5")], {
       account: system.initiator3.account,
     });
     await viem.assertions.revertWithCustomError(
@@ -197,8 +181,8 @@ describe("YoulinProtocol boundaries and aggregate views", function () {
     );
 
     const initiators = await system.protocol.read.getInitiators([1n]);
-    assert.equal(initiators[0].length, 3);
-    assert.deepEqual(initiators[1], [true, true, true]);
+    assert.equal(initiators[0].length, 4);
+    assert.deepEqual(initiators[1], [true, true, true, true]);
     assert.deepEqual(
       await system.protocol.read.getInitiatedProjects([
         system.initiator1.account.address,
