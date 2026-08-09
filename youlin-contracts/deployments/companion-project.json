@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "projectId": "8",
+  "name": "为孤独老年人提供陪伴",
+  "metadataURI": "https://youlin-dao-civic-profile-july24.mo-yang2023.chatgpt.site/demo/metadata/companion-elderly.json",
+  "metadataHash": "0xbdc8bf01c66dadfb2e8d799d3e6bf936942b85e89a6c8b7eb4b88e5026563a2b",
+  "targetMON": "30",
+  "requestedDeadline": "2026-08-10T22:00:00+08:00",
+  "round1DeadlineUnix": "1786370400",
+  "expectedDurationSeconds": "2592000",
+  "projectWallet": "0x00A206fcCD057360F173D31A2f6090C74f9F456c",
+  "userInitiator": "0xe1599f523fbfd71be9e5f5f4b8d6989983918b8b",
+  "virtualInitiators": [
+    "0x077c889d3F1fCE509765e39388765eBEA0457e60",
+    "0x96EcbE0D0A285f8469844B71b28a001e57B7Ab81"
+  ],
+  "transactions": [
+    {
+      "label": "项目 #8：创建“为孤独老年人提供陪伴”草案",
+      "hash": "0x32bb596322480c1179eaabfe107955fb956baf558c1149b04e2f76cc4a51af89",
+      "blockNumber": "52193849",
+      "confirmedAt": "2026-08-09T08:56:46.320Z"
+    },
+    {
+      "label": "项目 #8：虚拟共同发起人 1 锁定 5 R",
+      "hash": "0x8ef2e3b8c82b4a0f7b466651bb1279f937e9030f886ac199d26838994ad9c834",
+      "blockNumber": "52193861",
+      "confirmedAt": "2026-08-09T08:56:48.983Z"
+    },
+    {
+      "label": "项目 #8：虚拟共同发起人 2 锁定 5 R",
+      "hash": "0x6f13170816bdad6bbc02fb60388adc7520ca57c6161f6a648fa34cb73e4bd553",
+      "blockNumber": "52193865",
+      "confirmedAt": "2026-08-09T08:56:51.172Z"
+    }
+  ],
+  "updatedAt": "2026-08-09T08:56:53.890Z",
+  "finalState": {
+    "state": "Draft",
+    "acceptedInitiators": "2",
+    "requiredInitiators": "3",
+    "totalStakedR": "10",
+    "requiredTotalStakeR": "30",
+    "userStakeR": "0",
+    "userRequiredStakeR": "20",
+    "userAvailableR": "100",
+    "round1DeadlineUnix": "1786370400",
+    "round1DeadlineAsiaShanghai": "2026-08-10T22:00:00+08:00",
+    "explorerProjectContract": "https://testnet.monadscan.com/address/0x20a1Df8893fD7531A77E225f9727b45959D2ff66"
+  }
+}

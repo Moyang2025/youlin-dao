@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "demoOnly": true,
+  "network": "Monad Testnet",
+  "name": "为孤独老年人提供陪伴",
+  "category": "老年关怀",
+  "summary": "Monad Testnet 公益演示项目：通过定期上门陪伴、电话关怀和社区交流活动，为缺少日常陪伴的老年人建立持续、可追踪的情感支持。",
+  "location": "Monad Testnet Demo",
+  "targetAmountMON": "30",
+  "expectedDurationSeconds": 2592000,
+  "fundUse": [
+    { "item": "定期上门陪伴与交通支持", "amountMON": "15" },
+    { "item": "电话关怀与社区交流活动", "amountMON": "10" },
+    { "item": "服务记录、回访与效果评估", "amountMON": "5" }
+  ],
+  "milestones": [
+    "完成关怀对象需求确认与服务安排",
+    "开展第一阶段陪伴和电话关怀",
+    "提交中期服务记录并接受捐款者评分",
+    "根据中期结果继续第二阶段服务",
+    "提交回访记录和结项成果"
+  ],
+  "images": [],
+  "disclaimer": "本项目仅用于 Monad Testnet 黑客松演示，测试 MON 不代表现实捐赠。"
+}
